@@ -8,23 +8,25 @@ pygame.init()
 
 pygame.display.set_caption("Hikaro Adventure")
 
-WINDOW_SIZE = (700, 400)
+WINDOW_SIZE = (1280, 1024)
 
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
 
-player_image = pygame.image.load('zaglushka')
+bg_image = pygame.image.load('res/backgrounds/bg_mnt-valley.jpg')
+
+player_image = pygame.image.load('res/sprites/hero/run_1.png')
 moving_right = False
 moving_left = False
 player_location = [30, 30]
 player_y_momentum = 0
 player_rect = pygame.Rect(player_location[0], player_location[1],
                           player_image.get_width(), player_image.get_height())
-test_rect = pygame.Rect(100,100,100,50)
+test_rect = pygame.Rect(100, 100, 100, 50)
 while True:
-    screen.fill((146, 244, 255))
+    screen.blit(bg_image, (0, 0))
     screen.blit(player_image, player_location)
 
-    if player_location[1] > WINDOW_SIZE[1]-player_image.get_height():
+    if player_location[1] > WINDOW_SIZE[1] - player_image.get_height():
         player_y_momentum = -player_y_momentum
     else:
         player_y_momentum += 0.2
