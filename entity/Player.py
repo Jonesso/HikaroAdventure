@@ -2,8 +2,10 @@ import pygame as pg
 from settings import *
 
 
-class Player:
-    def __init__(self, x, y):
+class Player(pg.sprite.Sprite):
+    def __init__(self, all_sprites, x, y):
+        self.groups = all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.image.load('res/sprites/hero/run_1.png').convert()
         self.image.set_colorkey((255, 255, 255))
         self.x = x * TILESIZE
@@ -13,11 +15,12 @@ class Player:
         self.moving_left = False
         self.y_momentum = 0
         self.air_timer = 0
-        self.true_scroll = [50, 100]
+        self.true_scroll = [0, 0]
         self.scroll = [0, 0]
         self.movement = [0, 0]
+        self.tile_rects = []
 
-    def update(self, tile_rects):
+    def update(self):
         self.movement = [0, 0]
         if self.moving_right:
             self.movement[0] += 2
@@ -28,7 +31,7 @@ class Player:
         if self.y_momentum > 3:
             self.y_momentum = 3
 
-        self.rect, collisions = self.move(self.rect, self.movement, tile_rects)
+        self.rect, collisions = self.move(self.rect, self.movement, self.tile_rects)
 
         if collisions['bottom']:
             self.y_momentum = 0
@@ -65,10 +68,11 @@ class Player:
                 collision_types['top'] = True
         return rect, collision_types
 
-    def update_scroll(self):
-        WINDOW_SIZE = (WIDTH, HEIGHT)
-        self.true_scroll[0] += (self.rect.x - self.true_scroll[0] - WINDOW_SIZE[0] // 4) / 14
-        self.true_scroll[1] += (self.rect.y - self.true_scroll[1] - WINDOW_SIZE[1] // 4) / 14
+    def update_scroll(self, w, h):
+        if 0 <= self.rect.x - WIDTH // 4 and self.rect.x + WIDTH // 4 <= w:
+            self.true_scroll[0] += (self.rect.x - self.true_scroll[0] - WIDTH // 4) / 14
+        if 0 <= self.rect.y - HEIGHT // 4 and self.rect.y + HEIGHT // 4 <= h:
+            self.true_scroll[1] += (self.rect.y - self.true_scroll[1] - HEIGHT // 4) / 14
         scroll = self.true_scroll.copy()
         # for images to render correctly
         self.scroll[0] = int(scroll[0])

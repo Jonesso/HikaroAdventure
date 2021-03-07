@@ -8,8 +8,8 @@ from os import path
 class Map:
     def __init__(self, filename):
         self.tmx_data = load_pygame(path.join("res/maps/", filename))
-        self.width = self.tmx_data.width
-        self.height = self.tmx_data.height
+        self.width = self.tmx_data.width * TILESIZE
+        self.height = self.tmx_data.height * TILESIZE
 
     def get_tile_properties(self, x, y):
         tile_x = x // TILESIZE
@@ -32,24 +32,3 @@ class Map:
                 if self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)['ground']:
                     tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
         return tile_rects
-
-
-class Camera:
-    def __init__(self, width, height):
-        self.camera = pg.Rect(0, 0, width, height)
-        self.width = width
-        self.height = height
-
-    def apply(self, entity):
-        return entity.rect.move(self.camera.topleft)
-
-    def update(self, target):
-        x = -target.x + int(WIDTH / 2)
-        y = -target.y + int(HEIGHT / 2)
-
-        # limit scrolling to map size
-        x = min(0, x)  # left
-        y = min(0, y)  # top
-        x = max(-(self.width - WIDTH), x)  # right
-        y = max(-(self.height - HEIGHT), y)  # bottom
-        self.camera = pg.Rect(x, y, self.width, self.height)
