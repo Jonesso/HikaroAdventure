@@ -1,8 +1,8 @@
-from entity.Person import Person
+from entity.Player import Player
 from entity.interface.Movable import Movable
 
 
-class Guard(Movable, Person):
+class Guard(Movable, Player):
     def __init__(self):
         super().__init__()
         self.c = None

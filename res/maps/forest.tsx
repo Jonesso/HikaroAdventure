@@ -226,4 +226,54 @@
    <property name="ground" value="1"/>
   </properties>
  </tile>
+ <tile id="126">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="127">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="128">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="129">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="130">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="131">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="132">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="133">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="134">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="135">
+  <properties>
+   <property name="ground" value="1"/>
+  </properties>
+ </tile>
 </tileset>
