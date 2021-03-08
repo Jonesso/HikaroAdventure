@@ -45,8 +45,9 @@ while True:  # game loop
     player.tile_rects = map.blit_all_tiles(display, player.scroll)
     all_sprites.update()
 
+
     for sprite in all_sprites:
-        display.blit(sprite.image, (player.rect.x - player.scroll[0], player.rect.y - player.scroll[1]))
+        display.blit(pg.transform.flip(sprite.image, player.flip, False), (player.rect.x - player.scroll[0], player.rect.y - player.scroll[1]))
 
     for event in pygame.event.get():  # event loop
         if event.type == QUIT:  # check for window quit
