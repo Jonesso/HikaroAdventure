@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+env/Scripts/pip*.exe
+
 # Distribution / packaging
 .Python
 .idea
