@@ -1,4 +1,5 @@
 import sys
+import pygame
 
 from pygame.locals import *
 
@@ -7,7 +8,11 @@ from tilemap import *
 
 clock = pygame.time.Clock()  # set up the clock
 
+pygame.mixer.pre_init(44100, -16, 2, 512)  # frequency, size, amount of channels, buffer
+
 pygame.init()  # initiate pygame
+
+pygame.mixer.set_num_channels(64)  # default is 8, which is not enough
 
 pygame.display.set_caption(TITLE)  # set the window name
 
@@ -19,6 +24,17 @@ display = pygame.Surface((WIDTH // 2, HEIGHT // 2))
 
 bg = pygame.image.load("res/backgrounds/bg_mnt-valley.jpg")
 
+# Sounds
+jump_sound = pygame.mixer.Sound('res/music/sounds/jump.wav')
+jump_sound.set_volume(0.4)
+grass_sound = [pygame.mixer.Sound('res/music/sounds/grass_0.wav'), pygame.mixer.Sound('res/music/sounds/grass_1.wav')]
+grass_sound[0].set_volume(0.2)
+grass_sound[1].set_volume(0.2)
+
+pygame.mixer.music.load('res/music/levels/bg_music.wav')
+pygame.mixer.music.play(-1)  # -1 = repeat infinitely
+
+# Map and sprites
 level_map = Map("map.tmx")
 all_sprites = pygame.sprite.Group()
 player = Player(all_sprites, 15, 10)  # x, y: start coord-s
@@ -29,6 +45,10 @@ bg_y = 0
 while True:  # game loop
     player.update_scroll(level_map.width, level_map.height)
     display.blit(bg, (bg_x, bg_y))  # background move (actually no)
+
+    # TODO grass sound
+    # if player.grass_sound_timer > 0:
+    #     player.grass_sound_timer -= 1
 
     # # big most backward rectangle
     # pygame.draw.rect(display, (7, 80, 75), pygame.Rect(0, 120, 300, 80))
@@ -54,12 +74,18 @@ while True:  # game loop
             pygame.quit()  # stop pygame
             sys.exit()  # stop script
         if event.type == KEYDOWN:
+            # Music fading out on pressed "W" & playing again on pressed "E"
+            if event.key == K_w:
+                pygame.mixer.music.fadeout(1000)
+            if event.key == K_e:
+                pygame.mixer.music.play(-1)
             if event.key == K_RIGHT:
                 player.moving_right = True
             if event.key == K_LEFT:
                 player.moving_left = True
             if event.key == K_UP:
                 if player.air_timer < 6:
+                    jump_sound.play()
                     player.y_momentum = -5
         if event.type == KEYUP:
             if event.key == K_RIGHT:
