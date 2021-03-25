@@ -4,6 +4,9 @@ import glob
 
 
 class Player(pg.sprite.Sprite):
+    """
+    Player object, inited by sprite group and start coords
+    """
     def __init__(self, all_sprites, x, y):
         """
         Constructor for Player
