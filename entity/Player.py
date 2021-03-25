@@ -14,6 +14,7 @@ class Player(pg.sprite.Sprite):
         :param all_sprites: sprite group for Player
         :param x: start X coordinate
         :param y: start Y coordinate
+        :type all_sprites: pygame.sprite.Group
         :type x: int
         :type y: int
         :return: Player object

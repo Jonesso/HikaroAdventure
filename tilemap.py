@@ -6,12 +6,36 @@ from os import path
 
 
 class Map:
+    """
+    Game map with:
+        tmx_data: current map
+
+        width: map width in blocks * TILESIZE
+
+        height: map height in block * TILESIZE
+    """
     def __init__(self, filename):
+        """
+        Constructor for Map
+
+        :param filename: file name in res/maps with '.tmx'
+        :type filename: str
+        """
         self.tmx_data = load_pygame(path.join("res/maps/", filename))
         self.width = self.tmx_data.width * TILESIZE
         self.height = self.tmx_data.height * TILESIZE
 
     def get_tile_properties(self, x, y):
+        """
+        Get properties for tile with coords x & y
+
+        :param x: X coordinate
+        :param y: Y coordinate
+        :type x: int
+        :type y: int
+        :return: properties of tile
+        :rtype: dict
+        """
         tile_x = x // TILESIZE
         tile_y = y // TILESIZE
         try:
@@ -23,6 +47,15 @@ class Map:
         return properties
 
     def blit_all_tiles(self, display, scroll):
+        """
+        Return list of all interactive (e.g. ground) blocks
+
+        :param display: game screen
+        :type display: pygame.Surface
+        :param scroll: camera scroll params
+        :type scroll: list
+        :return: list of all interactive blocks
+        """
         tile_rects = []
         for layer in self.tmx_data:
             for tile in layer.tiles():
