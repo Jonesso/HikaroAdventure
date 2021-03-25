@@ -5,6 +5,17 @@ import glob
 
 class Player(pg.sprite.Sprite):
     def __init__(self, all_sprites, x, y):
+        """
+        Constructor for Player
+
+        :param all_sprites: sprite group for Player
+        :param x: start X coordinate
+        :param y: start Y coordinate
+        :type x: int
+        :type y: int
+        :return: Player object
+        :rtype: Player
+        """
         self.groups = all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.image.load('res/sprites/hero/idle_0.png').convert()
@@ -31,6 +42,9 @@ class Player(pg.sprite.Sprite):
         self.flip = False
 
     def update(self):
+        """
+        Updates the player position on screen, draw animation
+        """
         self.movement = [0, 0]
         if self.moving_right:
             self.movement[0] += 2
@@ -64,6 +78,15 @@ class Player(pg.sprite.Sprite):
             self.air_timer += 1
 
     def collision_test(self, rect, tiles):
+        """
+        Check for collisions
+
+        :param rect: block object for collision check
+        :type rect: pygame.Rect
+        :param tiles: all blocks in map
+        :type tiles: list
+        :return: list of hit blocks
+        """
         hit_list = []
         for tile in tiles:
             if rect.colliderect(tile):
@@ -71,6 +94,18 @@ class Player(pg.sprite.Sprite):
         return hit_list
 
     def move(self, rect, movement, tiles):
+        """
+        Player movement by offsets
+
+        :param rect: player block object
+        :param movement: x and y offset
+        :param tiles: all blocks in map
+        :type rect: pygame.Rect
+        :type movement: list
+        :type tiles: list
+        :return: new player rectangle and collision types(bottom, right, ...)
+        :rtype: (pygame.Rect, list)
+        """
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
         rect.x += movement[0]
         hit_list = self.collision_test(rect, tiles)
@@ -93,6 +128,14 @@ class Player(pg.sprite.Sprite):
         return rect, collision_types
 
     def update_scroll(self, w, h):
+        """
+        Control camera limits
+
+        :param w: map width
+        :param h: map height
+        :type w: int
+        :type h: int
+        """
         if 0 <= self.rect.x - WIDTH // 4 and self.rect.x + WIDTH // 4 <= w:
             self.true_scroll[0] += (self.rect.x - self.true_scroll[0] - WIDTH // 4) / 14
         if 0 <= self.rect.y - HEIGHT // 4 and self.rect.y + HEIGHT // 4 <= h:
@@ -103,6 +146,16 @@ class Player(pg.sprite.Sprite):
         self.scroll[1] = int(scroll[1])
 
     def load_animation(self, action, frame_durations):
+        """
+        Loading animation for action with frame durations
+
+        :param action: current player action
+        :type action: str
+        :param frame_durations: list of int with frame durations
+        :type frame_durations: list
+        :return: list of frames
+        :rtype: list
+        """
         path = "res/sprites/hero/{}_*.png"
         sprites = glob.glob(path.format(action))
         animation_frame_data = []
@@ -118,6 +171,18 @@ class Player(pg.sprite.Sprite):
         return animation_frame_data
 
     def change_action(self, action_var, frame, new_value):
+        """
+        Change action from 'action_var' to 'new_value'
+
+        :param action_var: Current action
+        :type action_var: str
+        :param frame: Current frame
+        :type frame: int
+        :param new_value: New action
+        :type new_value: str
+        :return: Tuple of new action and frame
+        :rtype: (str, int)
+        """
         if action_var != new_value:
             action_var = new_value
             frame = 0
