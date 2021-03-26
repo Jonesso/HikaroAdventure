@@ -6,7 +6,7 @@ __pycache__/
 # C extensions
 *.so
 
-env/Scripts/pip*.exe
+env/
 
 # Distribution / packaging
 .Python
