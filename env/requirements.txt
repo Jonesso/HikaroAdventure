@@ -8,4 +8,5 @@ py==1.10.0
 pygame==2.0.1
 pyparsing==2.4.7
 pytest==6.2.2
+PyTMX==3.24
 toml==0.10.2
