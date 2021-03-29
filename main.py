@@ -4,10 +4,17 @@ from entity.Player import Player
 from tilemap import *
 
 
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
 class Game:
     """
     Main game class, contains all the logic of the game interface
     """
+
     def __init__(self):
         """
         Constructor, init pygame, screen, display, set caption, set FPS, load map data
@@ -17,7 +24,8 @@ class Game:
         self.display = pg.Surface((WIDTH // 2, HEIGHT // 2))
         pg.display.set_caption(TITLE)  # set the window name
         self.clock = pg.time.Clock()  # set up the clock
-        self.load_data("map")  # TODO add changing levels
+        #  self.load_data("map")  # TODO add changing levels
+        self.new()
 
     def load_data(self, level_name):
         """
@@ -52,17 +60,7 @@ class Game:
         grass_sound[0].set_volume(0.2)
         grass_sound[1].set_volume(0.2)
 
-    def run(self):
-        """
-        Game cycle: update-draw-events-clock(fps)
-        Running while playing == True
-        """
-        self.playing = True
-        while self.playing:
-            self.update()
-            self.draw()
-            self.events()
-            self.clock.tick(60)  # maintain 60 fps
+        self.font = pygame.font.Font(None, 40)
 
     def quit(self):
         """
@@ -112,24 +110,70 @@ class Game:
                     if self.player.air_timer < 6:
                         self.jump_sound.play()
                         self.player.y_momentum = -5
+                if event.key == K_ESCAPE:
+                    self.playing = False
             if event.type == KEYUP:
                 if event.key == K_RIGHT:
                     self.player.moving_right = False
                 if event.key == K_LEFT:
                     self.player.moving_left = False
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.click = True
 
-    def show_start_screen(self):
+    def show_menu_screen(self):
+        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.transform.scale(bg, WINDOW_SIZE)
+        x = WIDTH // 12
+        y = HEIGHT // 16
+        button_width = 200
+        button_height = 50
+        while True:
+            self.screen.blit(bg, (0, 0))
+            draw_text('Main menu', self.font, WHITE, self.screen, x, y * 2)
+
+            mx, my = pg.mouse.get_pos()
+
+            button_game = pygame.Rect(x, y * 4, button_width, button_height)
+            button_options = pygame.Rect(x, y * 6, button_width, button_height)
+
+            if button_game.collidepoint((mx, my)):
+                if self.click:
+                    self.show_game_screen("map")
+            if button_options.collidepoint((mx, my)):
+                if self.click:
+                    self.show_options_screen()
+            pygame.draw.rect(self.screen, LIGHTGREY, button_game)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_options)
+            draw_text('Start', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Start') * button_width // 30,
+                      y * 4 + button_height // 2 - 11)
+            draw_text('Options', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Options') * button_width // 30,
+                      y * 6 + button_height // 2 - 11)
+            self.click = False
+            self.events()
+            pg.display.update()
+            self.clock.tick(FPS)
+
+    def show_game_screen(self, level_name):
+        """
+        Game cycle: update-draw-events-clock(fps)
+        Running while playing == True
+        """
+        self.load_data(level_name)
+        self.playing = True
+        while self.playing:
+            self.update()
+            self.draw()
+            self.events()
+            self.clock.tick(FPS)  # maintain 60 fps
+
+    def show_options_screen(self):
+        print("options")
         pass
 
-    def show_go_screen(self):
-        pass
 
-
-# create the game object
+# create the game object and show menu
 g = Game()
-g.show_start_screen()
-while True:
-    g.new()
-    g.run()
-    g.show_go_screen()
-
+g.show_menu_screen()
