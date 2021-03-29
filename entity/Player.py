@@ -9,7 +9,7 @@ class Player(pg.sprite.Sprite):
     Player object, inited by sprite group and start coords
     """
 
-    def __init__(self, all_sprites, x, y):
+    def __init__(self, all_sprites, x, y, map):
         """
         Constructor for Player
 
@@ -29,14 +29,29 @@ class Player(pg.sprite.Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.rect = pg.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
+        self.map = map
 
         self.moving_right = False
         self.moving_left = False
         self.y_momentum = 0
         self.air_timer = 0
-        self.true_scroll = [self.x - WIDTH // 4 if x > 22 else self.x - self.rect.width,
-                            self.y - HEIGHT // 2  # + self.rect.height + 3 * TILESIZE
-                            ]
+        n_x = n_y = 0
+        w, h = map.width // TILESIZE, map.height // TILESIZE
+        if 0 <= x <= 22:
+            n_x = 0
+        elif 22 < x < w - WIDTH // 4 - self.rect.width:
+            n_x = self.x - WIDTH // 4
+        elif w - 22 <= x <= w:
+            n_x = w * TILESIZE - WIDTH // 2 - self.rect.width
+
+        if 0 <= y <= 22:
+            n_y = self.rect.height * 2
+        elif 22 < y < h - HEIGHT // 4 - self.rect.height:
+            n_y = self.y - HEIGHT // 4
+        elif w - 22 <= y <= w:
+            n_y = h * TILESIZE - HEIGHT // 2 - self.rect.height
+
+        self.true_scroll = [n_x, n_y]
         self.scroll = self.true_scroll.copy()
         self.movement = [0, 0]
         self.tile_rects = []
@@ -190,11 +205,15 @@ class Player(pg.sprite.Sprite):
         :type w: int
         :type h: int
         """
-        delta = abs(self.rect.y - self.true_scroll[1] - HEIGHT // 4)
-        if 0 <= self.rect.x - WIDTH // 4 and self.rect.x + WIDTH // 4 <= w:
+        deltaY = abs(self.rect.y - self.true_scroll[1] - HEIGHT // 4)
+        deltaX = abs(self.rect.x - self.true_scroll[0] - WIDTH // 4)
+
+        if self.rect.x + deltaX > WIDTH // 4 and self.rect.x - deltaX < w - WIDTH // 4:
             self.true_scroll[0] += (self.rect.x - self.true_scroll[0] - WIDTH // 4) / 14
-        if self.rect.y + delta >= HEIGHT // 4 and self.rect.y - delta + self.rect.height <= h - HEIGHT // 4:
+
+        if self.rect.y + deltaY >= HEIGHT // 4 and self.rect.y - deltaY + self.rect.height <= h - HEIGHT // 4:
             self.true_scroll[1] += (self.rect.y - self.true_scroll[1] - HEIGHT // 4) / 14
+        print(self.scroll)
         scroll = self.true_scroll.copy()
         # for images to render correctly
         self.scroll[0] = int(scroll[0])
@@ -242,6 +261,3 @@ class Player(pg.sprite.Sprite):
             action_var = new_value
             frame = 0
         return action_var, frame
-
-    def set_map(self, map):
-        self.map = map
