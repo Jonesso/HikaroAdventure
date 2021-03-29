@@ -60,7 +60,7 @@ class Game:
         grass_sound[0].set_volume(0.2)
         grass_sound[1].set_volume(0.2)
 
-        self.font = pygame.font.Font(None, 20)
+        self.font = pygame.font.Font(None, 40)
 
     def quit(self):
         """
@@ -110,6 +110,8 @@ class Game:
                     if self.player.air_timer < 6:
                         self.jump_sound.play()
                         self.player.y_momentum = -5
+                if event.key == K_ESCAPE:
+                    self.playing = False
             if event.type == KEYUP:
                 if event.key == K_RIGHT:
                     self.player.moving_right = False
@@ -120,22 +122,35 @@ class Game:
                     self.click = True
 
     def show_menu_screen(self):
+        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.transform.scale(bg, WINDOW_SIZE)
+        x = WIDTH // 12
+        y = HEIGHT // 16
+        button_width = 200
+        button_height = 50
         while True:
-            self.screen.fill((0, 0, 0))
-            draw_text('main menu', self.font, (255, 255, 255), self.screen, 40, 40)
+            self.screen.blit(bg, (0, 0))
+            draw_text('Main menu', self.font, WHITE, self.screen, x, y * 2)
 
             mx, my = pg.mouse.get_pos()
 
-            button_1 = pygame.Rect(50, 100, 200, 50)
-            button_2 = pygame.Rect(50, 200, 200, 50)
-            if button_1.collidepoint((mx, my)):
+            button_game = pygame.Rect(x, y * 4, button_width, button_height)
+            button_options = pygame.Rect(x, y * 6, button_width, button_height)
+
+            if button_game.collidepoint((mx, my)):
                 if self.click:
                     self.show_game_screen("map")
-            if button_2.collidepoint((mx, my)):
+            if button_options.collidepoint((mx, my)):
                 if self.click:
                     self.show_options_screen()
-            pygame.draw.rect(self.screen, (255, 0, 0), button_1)
-            pygame.draw.rect(self.screen, (255, 0, 0), button_2)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_game)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_options)
+            draw_text('Start', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Start') * button_width // 30,
+                      y * 4 + button_height // 2 - 11)
+            draw_text('Options', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Options') * button_width // 30,
+                      y * 6 + button_height // 2 - 11)
             self.click = False
             self.events()
             pg.display.update()
