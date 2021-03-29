@@ -1,5 +1,6 @@
 import pygame as pg
 from settings import *
+from pygame.locals import *
 import glob
 
 
@@ -7,6 +8,7 @@ class Player(pg.sprite.Sprite):
     """
     Player object, inited by sprite group and start coords
     """
+
     def __init__(self, all_sprites, x, y):
         """
         Constructor for Player
@@ -23,7 +25,7 @@ class Player(pg.sprite.Sprite):
         self.groups = all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.image.load('res/sprites/hero/idle_0.png').convert()
-        self.image.set_colorkey((255, 255, 255))
+        self.image.set_colorkey(WHITE)
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.rect = pg.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
@@ -32,8 +34,10 @@ class Player(pg.sprite.Sprite):
         self.moving_left = False
         self.y_momentum = 0
         self.air_timer = 0
-        self.true_scroll = [0, 0]
-        self.scroll = [0, 0]
+        self.true_scroll = [self.x - WIDTH // 4 if x > 22 else self.x - self.rect.width,
+                            self.y - HEIGHT // 2  # + self.rect.height + 3 * TILESIZE
+                            ]
+        self.scroll = self.true_scroll.copy()
         self.movement = [0, 0]
         self.tile_rects = []
 
@@ -45,10 +49,17 @@ class Player(pg.sprite.Sprite):
         self.frame = 0
         self.flip = False
 
+        self.jump_sound = pg.mixer.Sound('res/music/sounds/jump.wav')
+        self.jump_sound.set_volume(0.4)
+
+        self.key_up_pressed = False
+        self.key_down_pressed = False
+
     def update(self):
         """
         Updates the player position on screen, draw animation
         """
+        # Movement
         self.movement = [0, 0]
         if self.moving_right:
             self.movement[0] += 2
@@ -59,6 +70,7 @@ class Player(pg.sprite.Sprite):
         if self.y_momentum > 3:
             self.y_momentum = 3
 
+        # Frames update
         self.frame += 1
         if self.frame >= len(self.animation_database[self.action]):
             self.frame = 0
@@ -73,6 +85,7 @@ class Player(pg.sprite.Sprite):
             self.action, self.frame = self.change_action(self.action, self.frame, 'idle')
         self.image = self.animation_frames[self.animation_database[self.action][self.frame]]
 
+        # Moving and collisions
         self.rect, collisions = self.move(self.rect, self.movement, self.tile_rects)
 
         if collisions['bottom']:
@@ -80,6 +93,43 @@ class Player(pg.sprite.Sprite):
             self.air_timer = 0
         else:
             self.air_timer += 1
+
+        if collisions['top']:
+            self.y_momentum = 0
+
+        # Ladder
+        if self.key_up_pressed and pg.sprite.spritecollide(self, self.map.ladders, False):
+            self.y_momentum = -1
+            self.move(self.rect, [0, -1], self.tile_rects)
+        if self.key_down_pressed and pg.sprite.spritecollide(self, self.map.ladders, False):
+            self.y_momentum = 1
+            self.move(self.rect, [0, 1], self.tile_rects)
+
+    def update_event(self, event):
+        try:
+            if event.key == K_RIGHT:
+                self.moving_right = True
+            if event.key == K_LEFT:
+                self.moving_left = True
+            if event.type == KEYUP:
+                if event.key == K_RIGHT:
+                    self.moving_right = False
+                if event.key == K_LEFT:
+                    self.moving_left = False
+                if event.key == K_UP:
+                    self.key_up_pressed = False
+                if event.key == K_DOWN:
+                    self.key_down_pressed = False
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    self.key_up_pressed = True
+                    if self.air_timer < 6:
+                        self.jump_sound.play()
+                        self.y_momentum = -5
+                if event.key == K_DOWN:
+                    self.key_down_pressed = True
+        except AttributeError:
+            pass
 
     def collision_test(self, rect, tiles):
         """
@@ -140,9 +190,10 @@ class Player(pg.sprite.Sprite):
         :type w: int
         :type h: int
         """
+        delta = abs(self.rect.y - self.true_scroll[1] - HEIGHT // 4)
         if 0 <= self.rect.x - WIDTH // 4 and self.rect.x + WIDTH // 4 <= w:
             self.true_scroll[0] += (self.rect.x - self.true_scroll[0] - WIDTH // 4) / 14
-        if 0 <= self.rect.y - HEIGHT // 4 and self.rect.y + HEIGHT // 4 <= h:
+        if self.rect.y + delta >= HEIGHT // 4 and self.rect.y - delta + self.rect.height <= h - HEIGHT // 4:
             self.true_scroll[1] += (self.rect.y - self.true_scroll[1] - HEIGHT // 4) / 14
         scroll = self.true_scroll.copy()
         # for images to render correctly
@@ -191,3 +242,6 @@ class Player(pg.sprite.Sprite):
             action_var = new_value
             frame = 0
         return action_var, frame
+
+    def set_map(self, map):
+        self.map = map
