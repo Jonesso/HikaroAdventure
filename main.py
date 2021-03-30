@@ -107,7 +107,9 @@ class Game:
                 if event.key == K_e:
                     pg.mixer.music.play(-1)
                 if event.key == K_ESCAPE:
-                    self.playing = False
+                    if self.playing:
+                        self.click = False
+                        self.show_pause_screen()
             if self.playing:
                 self.player.update_event(event)
             if event.type == MOUSEBUTTONDOWN:
@@ -123,6 +125,7 @@ class Game:
             sound.set_volume(value / 100)
 
     def show_menu_screen(self):
+        # pg.mixer.music.stop()
         bg = pg.image.load("res/backgrounds/japan_menu.png")
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
@@ -178,7 +181,6 @@ class Game:
             self.draw()
             self.events()
             self.clock.tick(FPS)  # maintain 60 fps
-        pg.mixer.music.stop()
 
     def show_options_screen(self):
         bg = pg.image.load("res/backgrounds/japan_menu.png")
@@ -191,8 +193,8 @@ class Game:
                              handleColour=LIGHTGREY, handleRadius=30, initial=pg.mixer.music.get_volume() * 100)
         sliderSounds = Slider(self.screen, WIDTH // 3, y * 7, WIDTH // 3, 40, min=0, max=100, step=1, colour=DARKGREY,
                               handleColour=LIGHTGREY, handleRadius=30, initial=self.grass_sound[0].get_volume() * 100)
-        outputMusic = TextBox(self.screen, sliderMusic.getX() + sliderMusic.getWidth() + 50, y * 5, 40, 40, fontSize=30)
-        outputSounds = TextBox(self.screen, sliderSounds.getX() + sliderSounds.getWidth() + 50, y * 7, 40, 40,
+        outputMusic = TextBox(self.screen, sliderMusic.getX() + sliderMusic.getWidth() + 50, y * 5, 50, 40, fontSize=30)
+        outputSounds = TextBox(self.screen, sliderSounds.getX() + sliderSounds.getWidth() + 50, y * 7, 50, 40,
                                fontSize=30)
         running_options = True
         while running_options:
@@ -236,6 +238,61 @@ class Game:
             outputSounds.setText(sliderSounds.getValue())
             outputSounds.draw()
 
+            self.events()
+            pg.display.update()
+            self.clock.tick(FPS)
+
+    def show_pause_screen(self):
+        paused = True
+        pg.mixer.music.pause()
+        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.transform.scale(bg, WINDOW_SIZE)
+        button_width = 200
+        button_height = 50
+        x = (WIDTH - button_width) // 2
+        y = HEIGHT // 16
+        while paused:
+            self.screen.blit(bg, (0, 0))
+            draw_text('Pause', self.font, WHITE, self.screen,
+                      WIDTH // 2 - len('Pause') * button_width // 30, y * 3)
+
+            mx, my = pg.mouse.get_pos()
+
+            button_unpause = pygame.Rect(x, y * 6, button_width, button_height)
+            button_options = pygame.Rect(x, y * 8, button_width, button_height)
+            button_main_menu = pygame.Rect(x, y * 10, button_width, button_height)
+
+            if button_unpause.collidepoint((mx, my)):
+                if self.click:
+                    paused = False
+                    pg.mixer.music.unpause()
+            if button_options.collidepoint((mx, my)):
+                if self.click:
+                    self.click = False
+                    self.show_options_screen()
+            if button_main_menu.collidepoint((mx, my)):
+                if self.click:
+                    # paused = False
+                    self.playing = False
+                    self.click = False
+                    self.show_menu_screen()
+                    break
+
+            pygame.draw.rect(self.screen, LIGHTGREY, button_unpause)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_options)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_main_menu)
+
+            draw_text('Unpause', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Unpause') * button_width // 30,
+                      y * 6 + button_height // 2 - 11)
+            draw_text('Options', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Options') * button_width // 30,
+                      y * 8 + button_height // 2 - 11)
+            draw_text('Main menu', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Main menu') * button_width // 30,
+                      y * 10 + button_height // 2 - 11)
+
+            self.click = False
             self.events()
             pg.display.update()
             self.clock.tick(FPS)
