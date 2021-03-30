@@ -2,6 +2,7 @@ import sys
 from pygame.locals import *
 from entity.Player import Player
 from tilemap import *
+from pygame_widgets import Slider, TextBox
 
 
 def draw_text(text, font, color, surface, x, y):
@@ -54,11 +55,12 @@ class Game:
         # Sounds
         pg.mixer.pre_init(44100, -16, 2, 512)  # frequency, size, amount of channels, buffer
         pg.mixer.set_num_channels(64)  # default is 8, which is not enough
+        pg.mixer.music.set_volume(0.5)
 
-        grass_sound = [pygame.mixer.Sound('res/music/sounds/grass_0.wav'),
-                       pygame.mixer.Sound('res/music/sounds/grass_1.wav')]
-        grass_sound[0].set_volume(0.2)
-        grass_sound[1].set_volume(0.2)
+        self.grass_sound = [pygame.mixer.Sound('res/music/sounds/grass_0.wav'),
+                            pygame.mixer.Sound('res/music/sounds/grass_1.wav')]
+        for sound in self.grass_sound:
+            sound.set_volume(0.2)
 
         # Fonts
         self.font = pygame.font.Font(None, 40)
@@ -111,6 +113,14 @@ class Game:
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click = True
+        return pg.event.get()
+
+    def set_music_volume(self, value):
+        pg.mixer.music.set_volume(value / 100)
+
+    def set_sounds_volume(self, value):
+        for sound in self.grass_sound:
+            sound.set_volume(value / 100)
 
     def show_menu_screen(self):
         bg = pg.image.load("res/backgrounds/japan_menu.png")
@@ -122,7 +132,7 @@ class Game:
         while True:
             self.screen.blit(bg, (0, 0))
             draw_text('Hikaro Adventure', self.font, WHITE, self.screen,
-                      WIDTH // 2 - len('Hikaro Adventure') * button_width // 30, y * 4)
+                      WIDTH // 2 - len('Hikaro Adventure') * button_width // 30, y * 3)
 
             mx, my = pg.mouse.get_pos()
 
@@ -168,10 +178,67 @@ class Game:
             self.draw()
             self.events()
             self.clock.tick(FPS)  # maintain 60 fps
+        pg.mixer.music.stop()
 
     def show_options_screen(self):
-        print("options")
-        pass
+        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.transform.scale(bg, WINDOW_SIZE)
+        button_width = 200
+        button_height = 50
+        x = WIDTH // 16
+        y = HEIGHT // 16
+        print(pg.mixer.music.get_volume() * 100)
+        sliderMusic = Slider(self.screen, WIDTH // 3, y * 5, WIDTH // 3, 40, min=0, max=100, step=1, colour=DARKGREY,
+                             handleColour=LIGHTGREY, handleRadius=30, initial=pg.mixer.music.get_volume() * 100)
+        sliderSounds = Slider(self.screen, WIDTH // 3, y * 7, WIDTH // 3, 40, min=0, max=100, step=1, colour=DARKGREY,
+                              handleColour=LIGHTGREY, handleRadius=30, initial=self.grass_sound[0].get_volume() * 100)
+        outputMusic = TextBox(self.screen, sliderMusic.getX() + sliderMusic.getWidth() + 50, y * 5, 40, 40, fontSize=30)
+        outputSounds = TextBox(self.screen, sliderSounds.getX() + sliderSounds.getWidth() + 50, y * 7, 40, 40,
+                               fontSize=30)
+        running_options = True
+        while running_options:
+            self.screen.blit(bg, (0, 0))
+            draw_text('Options', self.font, WHITE, self.screen,
+                      WIDTH // 2 - len('Options') * button_width // 30, y * 3)
+
+            mx, my = pg.mouse.get_pos()
+
+            button_exit = pygame.Rect(x * 5, y * 14, button_width, button_height)
+            button_save = pygame.Rect(x * 9, y * 14, button_width, button_height)
+
+            if button_exit.collidepoint((mx, my)):
+                if self.click:
+                    running_options = False
+            if button_save.collidepoint((mx, my)):
+                if self.click:
+                    running_options = False
+                    self.set_sounds_volume(sliderSounds.getValue())
+                    self.set_music_volume(sliderMusic.getValue())
+
+            pygame.draw.rect(self.screen, LIGHTGREY, button_exit)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_save)
+
+            draw_text('Exit', self.font, WHITE, self.screen,
+                      x * 5 + button_width // 2 - len('Exit') * button_width // 30,
+                      y * 14 + button_height // 2 - 11)
+            draw_text('Save', self.font, WHITE, self.screen,
+                      x * 9 + button_width // 2 - len('Save') * button_width // 30,
+                      y * 14 + button_height // 2 - 11)
+
+            self.click = False
+            sliderMusic.listen(self.events())
+            sliderMusic.draw()
+            outputMusic.setText(sliderMusic.getValue())
+            outputMusic.draw()
+
+            sliderSounds.listen(self.events())
+            sliderSounds.draw()
+            outputSounds.setText(sliderSounds.getValue())
+            outputSounds.draw()
+
+            self.events()
+            pg.display.update()
+            self.clock.tick(FPS)
 
 
 if __name__ == "__main__":
