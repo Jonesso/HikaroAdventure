@@ -187,7 +187,6 @@ class Game:
         button_height = 50
         x = WIDTH // 16
         y = HEIGHT // 16
-        print(pg.mixer.music.get_volume() * 100)
         sliderMusic = Slider(self.screen, WIDTH // 3, y * 5, WIDTH // 3, 40, min=0, max=100, step=1, colour=DARKGREY,
                              handleColour=LIGHTGREY, handleRadius=30, initial=pg.mixer.music.get_volume() * 100)
         sliderSounds = Slider(self.screen, WIDTH // 3, y * 7, WIDTH // 3, 40, min=0, max=100, step=1, colour=DARKGREY,
@@ -226,6 +225,7 @@ class Game:
                       y * 14 + button_height // 2 - 11)
 
             self.click = False
+
             sliderMusic.listen(self.events())
             sliderMusic.draw()
             outputMusic.setText(sliderMusic.getValue())
