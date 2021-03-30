@@ -7,10 +7,10 @@ __pycache__/
 *.so
 
 env/
+
 # Distribution / packaging
 .Python
 .idea
-build/
 develop-eggs/
 dist/
 downloads/
