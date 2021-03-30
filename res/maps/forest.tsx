@@ -126,11 +126,6 @@
    <property name="ground" value="1"/>
   </properties>
  </tile>
- <tile id="62">
-  <properties>
-   <property name="ground" value="1"/>
-  </properties>
- </tile>
  <tile id="63">
   <properties>
    <property name="ground" value="1"/>
@@ -139,6 +134,11 @@
  <tile id="64">
   <properties>
    <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="75">
+  <properties>
+   <property name="ladder" value="1"/>
   </properties>
  </tile>
  <tile id="77">
@@ -164,6 +164,11 @@
  <tile id="81">
   <properties>
    <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="92">
+  <properties>
+   <property name="ladder" value="1"/>
   </properties>
  </tile>
  <tile id="93">
@@ -194,6 +199,11 @@
  <tile id="98">
   <properties>
    <property name="ground" value="1"/>
+  </properties>
+ </tile>
+ <tile id="109">
+  <properties>
+   <property name="ladder" value="1"/>
   </properties>
  </tile>
  <tile id="110">

@@ -213,7 +213,6 @@ class Player(pg.sprite.Sprite):
 
         if self.rect.y + deltaY >= HEIGHT // 4 and self.rect.y - deltaY + self.rect.height <= h - HEIGHT // 4:
             self.true_scroll[1] += (self.rect.y - self.true_scroll[1] - HEIGHT // 4) / 14
-        print(self.scroll)
         scroll = self.true_scroll.copy()
         # for images to render correctly
         self.scroll[0] = int(scroll[0])
