@@ -174,6 +174,7 @@ class Game:
         pass
 
 
-# create the game object and show menu
-g = Game()
-g.show_menu_screen()
+if __name__ == "__main__":
+    # create the game object and show menu
+    g = Game()
+    g.show_menu_screen()
