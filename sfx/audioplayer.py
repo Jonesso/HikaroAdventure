@@ -18,12 +18,13 @@ class AudioPlayer:
     def __init__(self):
         pygame.mixer.pre_init(frequency=44100, size=-16, channels=4, buffer=4096)  # frequency, size, amount of channels, buffer
         pygame.mixer.set_num_channels(64)  # default is 8, which is not enough
+        self.set_music_volume(0.1 * 100)  # TODO load from cfg all settings
+        self.set_sounds_volume(0.3 * 100)
         self.clock = pygame.time.get_ticks()
-
 
     def play_level_sound(self, level):
         pygame.mixer.music.load(self.bg_level_sounds[level])
-        pygame.mixer.music.set_volume(0.1)
+        self.set_music_volume(0.1 * 100)
         pygame.mixer.music.play(-1)  # -1 = repeat infinitely
 
     def play_grass_sound(self):
@@ -54,6 +55,7 @@ class AudioPlayer:
     def set_sounds_volume(self, value):
         for sound in self.grass_sounds:
             sound.set_volume(value / 100)
+        self.jump_sound.set_volume(value / 100)
 
     def get_music_volume(self):
         return pygame.mixer.music.get_volume() * 100

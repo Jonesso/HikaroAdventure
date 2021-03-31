@@ -30,6 +30,7 @@ class Game:
         self.new()
         self.playing = False
         self.audioplayer = AudioPlayer()
+        self.click = False
 
     def load_data(self, level_name):
         """

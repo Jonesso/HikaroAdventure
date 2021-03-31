@@ -118,8 +118,8 @@ class Player(pg.sprite.Sprite):
             self.y_momentum = 0
 
         # Ground
-        if (self.moving_left or self.moving_right) and pg.sprite.spritecollide(self, self.map.ground, False,
-                                                                               collided=pg.sprite.collide_circle):
+        if (self.moving_left or self.moving_right) and collisions['bottom'] and \
+                pg.sprite.spritecollide(self, self.map.ground, False, collided=pg.sprite.collide_circle):
             self.audioplayer.play_grass_sound()
 
         # Ladder
