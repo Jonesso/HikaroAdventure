@@ -67,12 +67,13 @@ class Player(pg.sprite.Sprite):
         self.frame = 0
         self.flip = False
 
-        # self.jump_sound = pg.mixer.Sound('res/music/sounds/jump.wav')
-        # self.jump_sound.set_volume(0.4)
         self.audioplayer = AudioPlayer()
 
         self.key_up_pressed = False
         self.key_down_pressed = False
+
+    def collide_floor(self, col_obj):
+        return self.y - col_obj.y < 5
 
     def update(self):
         """
@@ -115,6 +116,11 @@ class Player(pg.sprite.Sprite):
 
         if collisions['top']:
             self.y_momentum = 0
+
+        # Ground
+        if (self.moving_left or self.moving_right) and pg.sprite.spritecollide(self, self.map.ground, False,
+                                                                               collided=pg.sprite.collide_circle):
+            self.audioplayer.play_grass_sound()
 
         # Ladder
         if self.key_up_pressed and pg.sprite.spritecollide(self, self.map.ladders, False):
@@ -182,16 +188,6 @@ class Player(pg.sprite.Sprite):
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
         rect.x += movement[0]
 
-        # collided_with = player_sprite.spritecollideany(platform_sprite_group)
-        # if (collided_with != None):
-        #     print("Player collided with sprite: " + str(collided_with))
-
-        # for layer in self.map.tmx_data:
-        #     # print(layer.tiles())
-        #     for tile in self.map.tmx_data.get_tile_properties_by_layer(0):
-        #         print(tile)
-        #         # if tile[1] == 'ground':
-        #         #     self.audioplayer.play_grass_sound()
         hit_list = self.collision_test(rect, tiles)
         for tile in hit_list:
             if movement[0] > 0:
@@ -205,11 +201,6 @@ class Player(pg.sprite.Sprite):
         for tile in hit_list:
             if movement[1] > 0:
                 rect.bottom = tile.top
-                print(tile)
-                # print(self.map.tmx_data.tile_properties)
-                print(self.map.tmx_data.get_tile_properties_by_layer(0))
-                for tile_obj in self.map.tmx_data.get_tile_properties_by_layer(0):
-                    print(tile_obj)
                 collision_types['bottom'] = True
             elif movement[1] < 0:
                 rect.top = tile.bottom

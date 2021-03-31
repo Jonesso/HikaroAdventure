@@ -29,7 +29,8 @@ class Map:
         self.group = group  # Sprite group
 
         self.ladders = []
-        self.ladders_loaded = False
+        self.ground = []
+        self.blocks_loaded = False
 
     def get_tile_properties(self, x, y):
         """
@@ -75,7 +76,10 @@ class Map:
                 properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
                 if properties['ground']:
                     tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
-                if not self.ladders_loaded and properties['ladder']:
-                    self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
-        self.ladders_loaded = True
+                if not self.blocks_loaded:
+                    if properties['ladder']:
+                        self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
+                    if properties['ground']:
+                        self.ground.append(Ground(self.group, tile[2], tile[0], tile[1]))
+        self.blocks_loaded = True
         return tile_rects
