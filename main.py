@@ -2,6 +2,7 @@ import sys
 from pygame.locals import *
 from entity.Player import Player
 from tilemap import *
+from sfx.audioplayer import AudioPlayer
 
 
 def draw_text(text, font, color, surface, x, y):
@@ -27,6 +28,7 @@ class Game:
         self.clock = pg.time.Clock()  # set up the clock
         self.new()
         self.playing = False
+        self.audioplayer = AudioPlayer()
 
     def load_data(self, level_name):
         """
@@ -44,21 +46,22 @@ class Game:
 
         # Sounds
         # TODO choose bg_music by level
-        pg.mixer.music.load('res/music/levels/bg_music.wav')
-        pg.mixer.music.play(-1)  # -1 = repeat infinitely
+        # pg.mixer.music.load('res/music/levels/bg_music.wav')
+        # pg.mixer.music.play(-1)  # -1 = repeat infinitely
+        self.audioplayer.play_level_sound(level=0)
 
     def new(self):
         """
         Setup for a new game, initialize variables
         """
-        # Sounds
-        pg.mixer.pre_init(44100, -16, 2, 512)  # frequency, size, amount of channels, buffer
-        pg.mixer.set_num_channels(64)  # default is 8, which is not enough
-
-        grass_sound = [pygame.mixer.Sound('res/music/sounds/grass_0.wav'),
-                       pygame.mixer.Sound('res/music/sounds/grass_1.wav')]
-        grass_sound[0].set_volume(0.2)
-        grass_sound[1].set_volume(0.2)
+        # # Sounds
+        # pg.mixer.pre_init(44100, -16, 2, 512)  # frequency, size, amount of channels, buffer
+        # pg.mixer.set_num_channels(64)  # default is 8, which is not enough
+        #
+        # grass_sound = [pygame.mixer.Sound('res/music/sounds/grass_0.wav'),
+        #                pygame.mixer.Sound('res/music/sounds/grass_1.wav')]
+        # grass_sound[0].set_volume(0.2)
+        # grass_sound[1].set_volume(0.2)
 
         # Fonts
         self.font = pygame.font.Font(None, 40)
@@ -101,9 +104,9 @@ class Game:
             if event.type == KEYDOWN:
                 # Music fading out on pressed "W" & playing again on pressed "E"
                 if event.key == K_w:
-                    pg.mixer.music.fadeout(1000)
+                    self.audioplayer.mute()
                 if event.key == K_e:
-                    pg.mixer.music.play(-1)
+                    self.audioplayer.resume()
                 if event.key == K_ESCAPE:
                     self.playing = False
             if self.playing:
