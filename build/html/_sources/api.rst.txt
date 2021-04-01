@@ -29,3 +29,15 @@ Player class
 .. automodule:: Player
    :members:
    :undoc-members:
+
+
+Enemy class
+-------------------------------------------
+.. automodule:: Enemy
+   :members:
+   :undoc-members:
+
+Audioplayer class
+-------------------------------------------
+.. automodule:: audioplayer
+   :members:

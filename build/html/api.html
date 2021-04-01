@@ -91,6 +91,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-tilemap">Tilemap class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sprites">Sprites class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-Player">Player class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Enemy">Enemy class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-audioplayer">Audioplayer class</a></li>
 </ul>
 </li>
 </ul>
@@ -219,6 +221,11 @@ Running while playing == True</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="main.Game.show_pause_screen">
+<code class="sig-name descname"><span class="pre">show_pause_screen</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.Game.show_pause_screen" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="main.Game.update">
 <code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.Game.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update sprites and display, rendering background</p>
@@ -329,6 +336,11 @@ Running while playing == True</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="Player.Player.collide_floor">
+<code class="sig-name descname"><span class="pre">collide_floor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Player.Player.collide_floor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="Player.Player.collision_test">
 <code class="sig-name descname"><span class="pre">collision_test</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Player.Player.collision_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check for collisions</p>
@@ -407,6 +419,108 @@ Running while playing == True</p>
 <li><p><strong>w</strong> (<em>int</em>) – map width</p></li>
 <li><p><strong>h</strong> (<em>int</em>) – map height</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Enemy">
+<span id="enemy-class"></span><h2>Enemy class<a class="headerlink" href="#module-Enemy" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="Enemy.Enemy">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">Enemy.</span></code><code class="sig-name descname"><span class="pre">Enemy</span></code><a class="headerlink" href="#Enemy.Enemy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-audioplayer">
+<span id="audioplayer-class"></span><h2>Audioplayer class<a class="headerlink" href="#module-audioplayer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="audioplayer.AudioPlayer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">audioplayer.</span></code><code class="sig-name descname"><span class="pre">AudioPlayer</span></code><a class="headerlink" href="#audioplayer.AudioPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that is responsible for all sound effects in game</p>
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.get_music_volume">
+<code class="sig-name descname"><span class="pre">get_music_volume</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.get_music_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets background music volume percent</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>background music volume percent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.get_sound_volume">
+<code class="sig-name descname"><span class="pre">get_sound_volume</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.get_sound_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets sound effects volume percent</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sound effects volume percent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.mute">
+<code class="sig-name descname"><span class="pre">mute</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.mute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mutes background music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.play_grass_sound">
+<code class="sig-name descname"><span class="pre">play_grass_sound</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.play_grass_sound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays sound of hero when he’s walking on grass sprite</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.play_jump_sound">
+<code class="sig-name descname"><span class="pre">play_jump_sound</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.play_jump_sound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays sound of hero when he’s jumping</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.play_level_sound">
+<code class="sig-name descname"><span class="pre">play_level_sound</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.play_level_sound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays background music of each level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> – level index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.resume">
+<code class="sig-name descname"><span class="pre">resume</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replays background music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.set_music_volume">
+<code class="sig-name descname"><span class="pre">set_music_volume</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.set_music_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets volume of background music</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – volume percent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="audioplayer.AudioPlayer.set_sounds_volume">
+<code class="sig-name descname"><span class="pre">set_sounds_volume</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#audioplayer.AudioPlayer.set_sounds_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets volume of sound effects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – volume percent</p>
 </dd>
 </dl>
 </dd></dl>
