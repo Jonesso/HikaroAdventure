@@ -43,7 +43,7 @@ class Game:
         self.bg = pg.image.load("res/backgrounds/bg_mnt-valley.jpg")
         self.bg_x = self.bg_y = 0
         self.level_map = Map("{}.tmx".format(level_name), self.all_sprites)
-        self.player = Player(self.all_sprites, 16, 37, self.level_map)  # x, y: start coord-s
+        self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
         # TODO create a dict for levels and starting coords
 
         # Sounds
@@ -130,7 +130,7 @@ class Game:
 
             if button_game.collidepoint((mx, my)):
                 if self.click:
-                    self.show_game_screen("map")
+                    self.show_game_screen("level01")
             if button_options.collidepoint((mx, my)):
                 if self.click:
                     self.show_options_screen()
