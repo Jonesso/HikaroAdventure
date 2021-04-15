@@ -57,7 +57,7 @@ class Map:
                 properties.update({key: 0})
         return properties
 
-    def blit_all_tiles(self, display, scroll):
+    def blit_all_tiles(self, display, px, py, scroll):
         """
         Return list of all interactive (e.g. ground) blocks
 
@@ -70,16 +70,17 @@ class Map:
         tile_rects = []
         for layer in self.tmx_data:
             for tile in layer.tiles():
-                x = tile[0] * TILESIZE - scroll[0]
-                y = tile[1] * TILESIZE - scroll[1]
-                display.blit(tile[2], (x, y))
-                properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
-                if properties['ground']:
-                    tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
-                if not self.blocks_loaded:
-                    if properties['ladder']:
-                        self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
+                if abs(px - tile[0]) <= 40 and abs(py - tile[1]) <= 40:
+                    x = tile[0] * TILESIZE - scroll[0]
+                    y = tile[1] * TILESIZE - scroll[1]
+                    display.blit(tile[2], (x, y))
+                    properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
                     if properties['ground']:
-                        self.ground.append(Ground(self.group, tile[2], tile[0], tile[1]))
+                        tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
+                    if not self.blocks_loaded:
+                        if properties['ladder']:
+                            self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
+                        if properties['ground']:
+                            self.ground.append(Ground(self.group, tile[2], tile[0], tile[1]))
         self.blocks_loaded = True
         return tile_rects

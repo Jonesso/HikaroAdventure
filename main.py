@@ -71,7 +71,7 @@ class Game:
         """
         self.player.update_scroll(self.level_map.width, self.level_map.height)
         self.display.blit(self.bg, (self.bg_x, self.bg_y))  # background move (actually no)
-        self.player.tile_rects = self.level_map.blit_all_tiles(self.display, self.player.scroll)
+        self.player.tile_rects = self.level_map.blit_all_tiles(self.display, self.player.rect.x // TILESIZE, self.player.rect.y // TILESIZE, self.player.scroll)
         self.all_sprites.update()
 
     def draw(self):

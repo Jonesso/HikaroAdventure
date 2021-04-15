@@ -72,9 +72,7 @@ class Player(pg.sprite.Sprite):
 
         self.key_up_pressed = False
         self.key_down_pressed = False
-
-    def collide_floor(self, col_obj):
-        return self.y - col_obj.y < 5
+        self.key_z_pressed = False
 
     def update(self):
         """
@@ -131,6 +129,10 @@ class Player(pg.sprite.Sprite):
             self.y_momentum = 1
             self.move(self.rect, [0, 1], self.tile_rects)
 
+        if self.key_z_pressed:
+            self.y_momentum = 0.3
+            self.move(self.rect, [0, 1], self.tile_rects)
+
     def update_event(self, event):
         try:
             if event.key == K_RIGHT:
@@ -146,6 +148,8 @@ class Player(pg.sprite.Sprite):
                     self.key_up_pressed = False
                 if event.key == K_DOWN:
                     self.key_down_pressed = False
+                if event.key == K_z:
+                    self.key_z_pressed = False
             if event.type == KEYDOWN:
                 if event.key == K_UP:
                     self.key_up_pressed = True
@@ -157,6 +161,8 @@ class Player(pg.sprite.Sprite):
                         self.audioplayer.play_jump_sound()
                         self.y_momentum = -5
                         self.jump = True
+                if event.key == K_z:
+                    self.key_z_pressed = True
                 if event.key == K_DOWN:
                     self.key_down_pressed = True
         except AttributeError:
