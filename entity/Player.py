@@ -38,6 +38,7 @@ class Player(pg.sprite.Sprite):
         self.moving_left = False
         self.y_momentum = 0
         self.air_timer = 0
+        self.jump = False
         n_x = n_y = 0
         w, h = map.width // TILESIZE, map.height // TILESIZE
         if 0 <= x <= 22:
@@ -148,9 +149,14 @@ class Player(pg.sprite.Sprite):
             if event.type == KEYDOWN:
                 if event.key == K_UP:
                     self.key_up_pressed = True
+                    if self.jump:
+                        self.audioplayer.play_jump_sound()
+                        self.y_momentum = -5
+                        self.jump = False
                     if self.air_timer < 6:
                         self.audioplayer.play_jump_sound()
                         self.y_momentum = -5
+                        self.jump = True
                 if event.key == K_DOWN:
                     self.key_down_pressed = True
         except AttributeError:
