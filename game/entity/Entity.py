@@ -13,6 +13,7 @@ class Entity(pg.sprite.Sprite):
     """
     sprite_path = None
     audioplayer = AudioPlayer()
+    speed = 0
 
     def __init__(self, all_sprites, x, y, map):
         """
@@ -60,9 +61,9 @@ class Entity(pg.sprite.Sprite):
         # Movement
         self.movement = [0, 0]
         if self.moving_right:
-            self.movement[0] += 2
+            self.movement[0] += self.speed
         if self.moving_left:
-            self.movement[0] -= 2
+            self.movement[0] -= self.speed
         self.movement[1] += self.y_momentum
         self.y_momentum += 0.2
         if self.y_momentum > 3:

@@ -10,6 +10,7 @@ from utils import sprites_path
 
 class Player(Entity):
     sprite_path = os.path.join(sprites_path(), 'hero')
+    speed = 2
 
     def __init__(self, all_sprites, x, y, map):
         super().__init__(all_sprites, x, y, map)

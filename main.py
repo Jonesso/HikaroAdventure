@@ -49,7 +49,7 @@ class Game:
         self.level_map = Map("{}.tmx".format(level_name), self.all_sprites)
 
         self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
-        self.enemy = Enemy(self.all_sprites, 10, 10, self.level_map)
+        self.enemy = Enemy(self.all_sprites, 10, 36, self.level_map)
         # TODO create a dict for levels and starting coords
         # Sounds
         # TODO choose bg_music by level
