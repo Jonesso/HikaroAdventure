@@ -1,5 +1,8 @@
 import sys
 from pygame.locals import *
+
+from entity.Entity import Entity
+from entity.mobs.Enemy import Enemy
 from game.entity.heroes.Player import Player
 from game.world.tilemap import *
 from game.tools.sfx.audioplayer import AudioPlayer
@@ -44,9 +47,10 @@ class Game:
         self.bg = pg.image.load(background_path('bg_mnt-valley.jpg'))
         self.bg_x = self.bg_y = 0
         self.level_map = Map("{}.tmx".format(level_name), self.all_sprites)
-        self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
-        # TODO create a dict for levels and starting coords
 
+        self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
+        self.enemy = Enemy(self.all_sprites, 10, 10, self.level_map)
+        # TODO create a dict for levels and starting coords
         # Sounds
         # TODO choose bg_music by level
         self.audioplayer.play_level_sound(level=0)
@@ -83,9 +87,13 @@ class Game:
             if isinstance(sprite, Player):
                 self.display.blit(pg.transform.flip(sprite.image, self.player.flip, False), (
                     self.player.rect.x - self.player.scroll[0], self.player.rect.y - self.player.scroll[1]))
+            if isinstance(sprite, Enemy):
+                self.display.blit(pg.transform.flip(sprite.image, self.enemy.flip, False), (
+                    self.enemy.rect.x, self.enemy.rect.y))
         surf = pg.transform.scale(self.display, WINDOW_SIZE)
         self.screen.blit(surf, (0, 0))
         pg.display.update()  # update display
+
 
     def events(self):
         """
