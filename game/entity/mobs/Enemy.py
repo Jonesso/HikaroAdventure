@@ -4,11 +4,10 @@ from entity.Entity import Entity
 from utils import sprites_path
 from game.tools.settings import *
 
+
 class Enemy(Entity):
     sprite_path = os.path.join(sprites_path(), 'hero')
-    clock =pygame.time.get_ticks()
-
-
+    clock = pygame.time.get_ticks()
 
     def move_left(self):
         self.moving_left = True

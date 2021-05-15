@@ -77,6 +77,7 @@ class Game:
         self.player.update_scroll(self.level_map.width, self.level_map.height)
         self.display.blit(self.bg, (self.bg_x, self.bg_y))  # background move (actually no)
         self.player.tile_rects = self.level_map.blit_all_tiles(self.display, self.player.rect.x // TILESIZE, self.player.rect.y // TILESIZE, self.player.scroll)
+        self.enemy.tile_rects = self.player.tile_rects.copy()
         self.all_sprites.update()
 
     def draw(self):
@@ -89,7 +90,7 @@ class Game:
                     self.player.rect.x - self.player.scroll[0], self.player.rect.y - self.player.scroll[1]))
             if isinstance(sprite, Enemy):
                 self.display.blit(pg.transform.flip(sprite.image, self.enemy.flip, False), (
-                    self.enemy.rect.x, self.enemy.rect.y))
+                    self.enemy.rect.x - self.player.scroll[0], self.enemy.rect.y - self.player.scroll[1]))
         surf = pg.transform.scale(self.display, WINDOW_SIZE)
         self.screen.blit(surf, (0, 0))
         pg.display.update()  # update display
