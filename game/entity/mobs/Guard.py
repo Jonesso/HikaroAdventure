@@ -1,4 +1,4 @@
-from game.entity.Player import Player
+from game.entity.heroes.Player import Player
 from entity.interface.Movable import Movable
 
 
