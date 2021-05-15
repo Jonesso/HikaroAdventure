@@ -1,10 +1,9 @@
 import pygame as pg
-import pytmx
 
-from settings import *
+from game.tools.settings import *
 from pygame.locals import *
 import glob
-from sfx.audioplayer import AudioPlayer
+from game.tools.sfx.audioplayer import AudioPlayer
 
 
 class Player(pg.sprite.Sprite):

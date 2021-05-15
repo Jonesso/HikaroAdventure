@@ -12,17 +12,17 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../entity'))
-sys.path.insert(0, os.path.abspath('../entity/mobs'))
-sys.path.insert(0, os.path.abspath('../sfx'))
+sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('../../game/entity'))
+sys.path.insert(0, os.path.abspath('../../game/entity/mobs'))
+sys.path.insert(0, os.path.abspath('../../game/tools/sfx'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'Hikaro Adventure'
-copyright = '2021, Sofya Pavlinina, Petukhov Nikita, Anikeev Semen'
-author = 'Sofya Pavlinina, Petukhov Nikita, Anikeev Semen'
+copyright = '2021, Sofya Pavlinina, Petukhov Nikita, Anikeev Semyon'
+author = 'Sofya Pavlinina, Petukhov Nikita, Anikeev Semyon'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'

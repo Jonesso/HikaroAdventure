@@ -1,9 +1,10 @@
 import sys
 from pygame.locals import *
-from entity.Player import Player
-from tilemap import *
-from sfx.audioplayer import AudioPlayer
+from game.entity.heroes.Player import Player
+from game.world.tilemap import *
+from game.tools.sfx.audioplayer import AudioPlayer
 from pygame_widgets import Slider, TextBox
+from utils import background_path
 
 
 def draw_text(text, font, color, surface, x, y):
@@ -40,7 +41,7 @@ class Game:
         :type level_name: str
         """
         self.all_sprites = pg.sprite.Group()
-        self.bg = pg.image.load("res/backgrounds/bg_mnt-valley.jpg")
+        self.bg = pg.image.load(background_path('bg_mnt-valley.jpg'))
         self.bg_x = self.bg_y = 0
         self.level_map = Map("{}.tmx".format(level_name), self.all_sprites)
         self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
@@ -111,7 +112,7 @@ class Game:
         return pg.event.get()
 
     def show_menu_screen(self):
-        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
         button_height = 50
@@ -168,7 +169,7 @@ class Game:
             self.clock.tick(FPS)  # maintain 60 fps
 
     def show_options_screen(self):
-        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
         button_height = 50
@@ -230,7 +231,7 @@ class Game:
     def show_pause_screen(self):
         paused = True
         pg.mixer.music.pause()
-        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
         button_height = 50

@@ -1,5 +1,5 @@
 import pygame
-from entity.Player import Player
+from game.entity.Player import Player
 
 pygame.init()
 

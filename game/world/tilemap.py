@@ -23,7 +23,7 @@ class Map:
         :param filename: file name in res/maps with '.tmx'
         :type filename: str
         """
-        self.tmx_data = load_pygame(path.join("res/maps/", filename))
+        self.tmx_data = load_pygame(path.join("../res/maps/", filename))
         self.width = self.tmx_data.width * TILESIZE
         self.height = self.tmx_data.height * TILESIZE
         self.group = group  # Sprite group
