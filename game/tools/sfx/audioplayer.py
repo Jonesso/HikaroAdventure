@@ -1,5 +1,6 @@
 import pygame
 import random
+from utils import music_levels_path, sounds_path
 
 pygame.mixer.init()
 
@@ -8,12 +9,12 @@ class AudioPlayer:
     """
     Class that is responsible for all sound effects in game
     """
-    bg_level_sounds = ['res/music/levels/bg_music.wav']
+    bg_level_sounds = [music_levels_path('bg_music')]
     grass_sounds = [
-        pygame.mixer.Sound('res/music/sounds/grass_0.wav'),
-        pygame.mixer.Sound('res//music/sounds/grass_1.wav'),
+        pygame.mixer.Sound(sounds_path('grass_0')),
+        pygame.mixer.Sound(sounds_path('grass_1')),
     ]
-    jump_sound = pygame.mixer.Sound('res//music/sounds/jump.wav')
+    jump_sound = pygame.mixer.Sound(sounds_path('jump'))
 
     def __init__(self):
         """

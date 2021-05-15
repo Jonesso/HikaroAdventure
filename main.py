@@ -1,9 +1,13 @@
 import sys
 from pygame.locals import *
-from entity.Player import Player
-from tilemap import *
-from sfx.audioplayer import AudioPlayer
+
+from entity.Entity import Entity
+from entity.mobs.Enemy import Enemy
+from game.entity.heroes.Player import Player
+from game.world.tilemap import *
+from game.tools.sfx.audioplayer import AudioPlayer
 from pygame_widgets import Slider, TextBox
+from utils import background_path
 
 
 def draw_text(text, font, color, surface, x, y):
@@ -40,12 +44,13 @@ class Game:
         :type level_name: str
         """
         self.all_sprites = pg.sprite.Group()
-        self.bg = pg.image.load("res/backgrounds/bg_mnt-valley.jpg")
+        self.bg = pg.image.load(background_path('bg_mnt-valley.jpg'))
         self.bg_x = self.bg_y = 0
         self.level_map = Map("{}.tmx".format(level_name), self.all_sprites)
-        self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
-        # TODO create a dict for levels and starting coords
 
+        self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
+        self.enemy = Enemy(self.all_sprites, 10, 36, self.level_map)
+        # TODO create a dict for levels and starting coords
         # Sounds
         # TODO choose bg_music by level
         self.audioplayer.play_level_sound(level=0)
@@ -72,6 +77,7 @@ class Game:
         self.player.update_scroll(self.level_map.width, self.level_map.height)
         self.display.blit(self.bg, (self.bg_x, self.bg_y))  # background move (actually no)
         self.player.tile_rects = self.level_map.blit_all_tiles(self.display, self.player.rect.x // TILESIZE, self.player.rect.y // TILESIZE, self.player.scroll)
+        self.enemy.tile_rects = self.player.tile_rects.copy()
         self.all_sprites.update()
 
     def draw(self):
@@ -82,9 +88,13 @@ class Game:
             if isinstance(sprite, Player):
                 self.display.blit(pg.transform.flip(sprite.image, self.player.flip, False), (
                     self.player.rect.x - self.player.scroll[0], self.player.rect.y - self.player.scroll[1]))
+            if isinstance(sprite, Enemy):
+                self.display.blit(pg.transform.flip(sprite.image, self.enemy.flip, False), (
+                    self.enemy.rect.x - self.player.scroll[0], self.enemy.rect.y - self.player.scroll[1]))
         surf = pg.transform.scale(self.display, WINDOW_SIZE)
         self.screen.blit(surf, (0, 0))
         pg.display.update()  # update display
+
 
     def events(self):
         """
@@ -111,7 +121,7 @@ class Game:
         return pg.event.get()
 
     def show_menu_screen(self):
-        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
         button_height = 50
@@ -168,7 +178,7 @@ class Game:
             self.clock.tick(FPS)  # maintain 60 fps
 
     def show_options_screen(self):
-        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
         button_height = 50
@@ -230,7 +240,7 @@ class Game:
     def show_pause_screen(self):
         paused = True
         pg.mixer.music.pause()
-        bg = pg.image.load("res/backgrounds/japan_menu.png")
+        bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         button_width = 200
         button_height = 50

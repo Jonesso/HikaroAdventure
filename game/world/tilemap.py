@@ -1,9 +1,9 @@
 import pygame as pg
-from settings import *
+from tools.settings import *
 import pygame
 from pytmx.util_pygame import load_pygame
 from os import path
-from sprites import *
+from game.world.sprites import *
 
 
 class Map:
@@ -23,7 +23,7 @@ class Map:
         :param filename: file name in res/maps with '.tmx'
         :type filename: str
         """
-        self.tmx_data = load_pygame(path.join("res/maps/", filename))
+        self.tmx_data = load_pygame(path.join("game/res/maps/", filename))
         self.width = self.tmx_data.width * TILESIZE
         self.height = self.tmx_data.height * TILESIZE
         self.group = group  # Sprite group
