@@ -38,7 +38,7 @@
  </tile>
  <tile id="24">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="25">
@@ -58,7 +58,7 @@
  </tile>
  <tile id="28">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="29">
@@ -108,7 +108,7 @@
  </tile>
  <tile id="58">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="59">
@@ -193,7 +193,7 @@
  </tile>
  <tile id="97">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="98">
@@ -208,17 +208,17 @@
  </tile>
  <tile id="110">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="111">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="112">
   <properties>
-   <property name="ground" value="1"/>
+   <property name="ground" value="0"/>
   </properties>
  </tile>
  <tile id="113">

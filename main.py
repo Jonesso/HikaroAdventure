@@ -49,7 +49,10 @@ class Game:
         self.level_map = Map("{}.tmx".format(level_name), self.all_sprites)
 
         self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
-        self.enemy = Enemy(self.all_sprites, 10, 36, self.level_map)
+
+        enemy = Enemy(self.all_sprites, 10, 36, self.level_map)
+        self.enemies = [enemy]
+
         # TODO create a dict for levels and starting coords
         # Sounds
         # TODO choose bg_music by level
@@ -79,11 +82,8 @@ class Game:
 
         player_x = self.player.rect.x // TILESIZE
         player_y = self.player.rect.y // TILESIZE
-        enemy_x = self.enemy.rect.x // TILESIZE
-        enemy_y = self.enemy.rect.y // TILESIZE
-
-        self.player.tile_rects, self.player.nearest_blocks = self.level_map.blit_all_tiles(self.display, player_x, player_y, self.player.scroll, True)
-        self.enemy.tile_rects, self.enemy.nearest_blocks = self.level_map.blit_all_tiles(self.display, enemy_x, enemy_y, self.player.scroll, False)
+        self.player.tile_rects, self.player.nearest_blocks = self.level_map.blit_all_tiles \
+            (self.display, player_x, player_y, self.player.scroll, self.enemies)
 
         self.all_sprites.update()
 
@@ -96,12 +96,11 @@ class Game:
                 self.display.blit(pg.transform.flip(sprite.image, self.player.flip, False), (
                     self.player.rect.x - self.player.scroll[0], self.player.rect.y - self.player.scroll[1]))
             if isinstance(sprite, Enemy):
-                self.display.blit(pg.transform.flip(sprite.image, self.enemy.flip, False), (
-                    self.enemy.rect.x - self.player.scroll[0], self.enemy.rect.y - self.player.scroll[1]))
+                self.display.blit(pg.transform.flip(sprite.image, sprite.flip, False), (
+                    sprite.rect.x - self.player.scroll[0], sprite.rect.y - self.player.scroll[1]))
         surf = pg.transform.scale(self.display, WINDOW_SIZE)
         self.screen.blit(surf, (0, 0))
         pg.display.update()  # update display
-
 
     def events(self):
         """

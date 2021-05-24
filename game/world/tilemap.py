@@ -30,8 +30,9 @@ class Map:
 
         self.ladders = []
         self.ground = []
-        self.player_x = -999
-        self.player_y = -999
+
+        self.properties = {}
+        self.fill_properties()
 
     def get_tile_properties(self, x, y):
         """
@@ -58,7 +59,7 @@ class Map:
                 properties.update({key: 0})
         return properties
 
-    def blit_all_tiles(self, display, px, py, scroll, isPlayer):
+    def blit_all_tiles(self, display, px, py, scroll, enemies):
         """
         Return list of all interactive (e.g. ground) blocks
 
@@ -68,35 +69,53 @@ class Map:
         :type scroll: list
         :return: list of all interactive blocks
         """
+        # For Player
+        self.ladders = []
         tile_rects = []
         nearest_blocks = []
-        if isPlayer:
-            if self.player_x == -999:
-                self.player_x = px
-                self.player_y = py
-            if self.player_x != px or self.player_y != py:
-                self.player_x = px
-                self.player_y = py
-            self.ladders = []
+        screen_tiles = self.find_nearest_tiles(px, py,
+                                               43 if px < 24 or px > self.width // TILESIZE - 24 else 23,
+                                               25 if py > self.height // TILESIZE - 13 or py < 13 else 15)
+        for tile in screen_tiles:
+            x = tile[0][0]
+            y = tile[0][1]
+            if not tile[1] is None:
+                properties = tile[1][0]
+                tile_image = tile[1][1]
+                display.blit(tile_image, (x * TILESIZE - scroll[0], y * TILESIZE - scroll[1]))
+                if abs(px - x) <= 2 and abs(py - y) <= 2:
+                    if int(properties['ground']):
+                        tile_rects.append(pygame.Rect(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE))
+                        nearest_blocks.append(Ground(self.group, tile_image, x, y))
+                    if int(properties['ladder']):
+                        self.ladders.append(Ladder(self.group, tile_image, x, y))
+        # For Enemy
+        for enemy in enemies:
+            enemy.tile_rects = []
+            enemy.nearest_blocks = []
+            for tile in self.find_nearest_tiles(enemy.rect.x // TILESIZE, enemy.rect.y // TILESIZE, 2, 2):
+                x = tile[0][0]
+                y = tile[0][1]
+                if not tile[1] is None:
+                    properties = tile[1][0]
+                    tile_image = tile[1][1]
+                    if int(properties['ground']):
+                        enemy.tile_rects.append(pygame.Rect(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE))
+                        enemy.nearest_blocks.append(Ground(self.group, tile_image, x, y))
+        return tile_rects, nearest_blocks
+
+    def fill_properties(self):
         for layer in self.tmx_data:
             for tile in layer.tiles():
-                x = tile[0] * TILESIZE - scroll[0]
-                y = tile[1] * TILESIZE - scroll[1]
-                # For Enemy
-                if not isPlayer:
-                    if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2:
-                        properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
-                        if properties['ground']:
-                            tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
-                            nearest_blocks.append(Ground(self.group, tile[2], tile[0], tile[1]))
-                # For Player
-                elif abs(px - tile[0]) <= 45 and abs(py - tile[1]) <= 40:
-                    display.blit(tile[2], (x, y))
-                    if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2:
-                        properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
-                        if properties['ground']:
-                            tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
-                            nearest_blocks.append(Ground(self.group, tile[2], tile[0], tile[1]))
-                        if properties['ladder']:
-                            self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
-        return tile_rects, nearest_blocks
+                self.properties.update(
+                    {(tile[0], tile[1]): (self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE), tile[2])})
+
+    def find_nearest_tiles(self, x, y, range_x, range_y):
+        tiles = []
+        for x1 in range(x - range_x, x + range_x + 1):
+            for y1 in range(y - range_y, y + range_y + 1):
+                if 0 <= x1 < self.width // TILESIZE and 0 <= y1 < self.height // TILESIZE:
+                    properties = self.properties.get((x1, y1))
+                    if properties is not None:
+                        tiles.append(((x1, y1), properties))
+        return tiles
