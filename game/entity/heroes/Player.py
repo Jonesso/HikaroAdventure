@@ -51,10 +51,14 @@ class Player(Entity):
         # Hover
         if self.key_z_pressed:
             self.y_momentum = 0.3
-            if not pg.sprite.spritecollide(self, self.map.ground, False, collided=pg.sprite.collide_circle):
+            if not pg.sprite.spritecollide(self, self.nearest_blocks, False, collided=pg.sprite.collide_circle):
                 self.action, self.frame = self.change_action(self.action, self.frame, 'hover')
                 self.image = self.animation_frames[self.animation_database[self.action][self.frame]]
             self.move(self.rect, [0, 1], self.tile_rects)
+        else:
+            if not pg.sprite.spritecollide(self, self.nearest_blocks, False, collided=pg.sprite.collide_circle):
+                self.action, self.frame = self.change_action(self.action, self.frame, 'jump')
+                self.image = self.animation_frames[self.animation_database[self.action][self.frame]]
 
     def update_event(self, event):
         try:

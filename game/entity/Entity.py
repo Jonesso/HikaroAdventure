@@ -45,6 +45,7 @@ class Entity(pg.sprite.Sprite):
 
         self.movement = [0, 0]
         self.tile_rects = []
+        self.nearest_blocks = []
 
         self.animation_frames = {}
         self.animation_database = {'idle': self.load_animation("idle", [7, 40, 40, 20]),
@@ -74,7 +75,7 @@ class Entity(pg.sprite.Sprite):
         if self.frame >= len(self.animation_database[self.action]):
             self.frame = 0
         # Moving and collisions
-        ground_collide = pg.sprite.spritecollide(self, self.map.ground, False, collided=pg.sprite.collide_circle)
+        ground_collide = pg.sprite.spritecollide(self, self.nearest_blocks, False, collided=pg.sprite.collide_circle)
         if self.movement[0] > 0 and ground_collide:
             self.action, self.frame = self.change_action(self.action, self.frame, 'run')
             self.flip = False
@@ -106,7 +107,7 @@ class Entity(pg.sprite.Sprite):
 
         # Ground
         if (self.moving_left or self.moving_right) and collisions['bottom'] and \
-                pg.sprite.spritecollide(self, self.map.ground, False, collided=pg.sprite.collide_circle):
+                pg.sprite.spritecollide(self, self.nearest_blocks, False, collided=pg.sprite.collide_circle):
             self.audioplayer.play_grass_sound()
 
     def collision_test(self, rect, tiles):

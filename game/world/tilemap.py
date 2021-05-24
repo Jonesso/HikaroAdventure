@@ -31,8 +31,7 @@ class Map:
         self.ladders = []
         self.ground = []
         self.player_x = self.player_y = -999
-
-        self.init()
+        self.player_moving = False
 
     def get_tile_properties(self, x, y):
         """
@@ -59,16 +58,7 @@ class Map:
                 properties.update({key: 0})
         return properties
 
-    def init(self):
-        for layer in self.tmx_data:
-            for tile in layer.tiles():
-                properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
-                if properties['ladder']:
-                    self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
-                if properties['ground']:
-                    self.ground.append(Ground(self.group, tile[2], tile[0], tile[1]))
-
-    def blit_all_tiles(self, display, px, py, scroll):
+    def blit_all_tiles(self, display, px, py, scroll, isPlayer):
         """
         Return list of all interactive (e.g. ground) blocks
 
@@ -79,28 +69,32 @@ class Map:
         :return: list of all interactive blocks
         """
         tile_rects = []
-        if self.player_x == -999:
-            self.player_x = px
-            self.player_y = py
-        if self.player_x != px or self.player_y != py:
-            self.player_x = px
-            self.player_y = py
+        nearest_blocks = []
+        if isPlayer:
+            if self.player_x == -999:
+                self.player_x = px
+                self.player_y = py
+            if self.player_x != px or self.player_y != py:
+                self.player_x = px
+                self.player_y = py
+                self.player_moving = True
         for layer in self.tmx_data:
             for tile in layer.tiles():
-                if abs(px - tile[0]) <= 45 and abs(py - tile[1]) <= 40:
-                    x = tile[0] * TILESIZE - scroll[0]
-                    y = tile[1] * TILESIZE - scroll[1]
+                x = tile[0] * TILESIZE - scroll[0]
+                y = tile[1] * TILESIZE - scroll[1]
+                if not isPlayer:
+                    if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2:
+                        properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
+                        if properties['ground']:
+                            tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
+                            nearest_blocks.append(Ground(self.group, tile[2], tile[0], tile[1]))
+                elif self.player_moving and abs(px - tile[0]) <= 45 and abs(py - tile[1]) <= 40:
                     display.blit(tile[2], (x, y))
-                    properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
-                    if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2 and properties['ground']:
-                        tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
-        return tile_rects
-
-    def get_enemy_tile_rects(self, px, py):
-        tile_rects = []
-        for layer in self.tmx_data:
-            for tile in layer.tiles():
-                properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
-                if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2 and properties['ground']:
-                    tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
-        return tile_rects
+                    if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2:
+                        properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
+                        if properties['ground']:
+                            tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
+                            nearest_blocks.append(Ground(self.group, tile[2], tile[0], tile[1]))
+                        if properties['ladder']:
+                            self.ladders.append(Ladder(self.group, tile[2], tile[0], tile[1]))
+        return tile_rects, nearest_blocks
