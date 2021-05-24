@@ -95,7 +95,6 @@ class Entity(pg.sprite.Sprite):
         self.image = self.animation_frames[self.animation_database[self.action][self.frame]]
 
         self.rect, collisions = self.move(self.rect, self.movement, self.tile_rects)
-
         if collisions['bottom']:
             self.y_momentum = 0
             self.air_timer = 0
@@ -106,8 +105,7 @@ class Entity(pg.sprite.Sprite):
             self.y_momentum = 0
 
         # Ground
-        if (self.moving_left or self.moving_right) and collisions['bottom'] and \
-                pg.sprite.spritecollide(self, self.nearest_blocks, False, collided=pg.sprite.collide_circle):
+        if (self.moving_left or self.moving_right) and collisions['bottom'] and ground_collide:
             self.audioplayer.play_grass_sound()
 
     def collision_test(self, rect, tiles):

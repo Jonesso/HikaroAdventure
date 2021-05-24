@@ -30,8 +30,8 @@ class Map:
 
         self.ladders = []
         self.ground = []
-        self.player_x = self.player_y = -999
-        self.player_moving = False
+        self.player_x = -999
+        self.player_y = -999
 
     def get_tile_properties(self, x, y):
         """
@@ -77,18 +77,20 @@ class Map:
             if self.player_x != px or self.player_y != py:
                 self.player_x = px
                 self.player_y = py
-                self.player_moving = True
+            self.ladders = []
         for layer in self.tmx_data:
             for tile in layer.tiles():
                 x = tile[0] * TILESIZE - scroll[0]
                 y = tile[1] * TILESIZE - scroll[1]
+                # For Enemy
                 if not isPlayer:
                     if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2:
                         properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
                         if properties['ground']:
                             tile_rects.append(pygame.Rect(tile[0] * TILESIZE, tile[1] * TILESIZE, TILESIZE, TILESIZE))
                             nearest_blocks.append(Ground(self.group, tile[2], tile[0], tile[1]))
-                elif self.player_moving and abs(px - tile[0]) <= 45 and abs(py - tile[1]) <= 40:
+                # For Player
+                elif abs(px - tile[0]) <= 45 and abs(py - tile[1]) <= 40:
                     display.blit(tile[2], (x, y))
                     if abs(px - tile[0]) <= 2 and abs(py - tile[1]) <= 2:
                         properties = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE)
