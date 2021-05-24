@@ -48,8 +48,8 @@ class Entity(pg.sprite.Sprite):
 
         self.animation_frames = {}
         self.animation_database = {'idle': self.load_animation("idle", [7, 40, 40, 20]),
-                                   'run': self.load_animation("run", [7, 7, 7, 7, 7, 7])}
-
+                                   'run': self.load_animation("run", [7, 7, 7, 7, 7, 7]),
+                                   'jump': self.load_animation("jump", [70, 30, 9, 9])}
         self.action = 'idle'
         self.frame = 0
         self.flip = False
@@ -73,18 +73,26 @@ class Entity(pg.sprite.Sprite):
         self.frame += 1
         if self.frame >= len(self.animation_database[self.action]):
             self.frame = 0
-
-        if self.movement[0] > 0:
+        # Moving and collisions
+        ground_collide = pg.sprite.spritecollide(self, self.map.ground, False, collided=pg.sprite.collide_circle)
+        if self.movement[0] > 0 and ground_collide:
             self.action, self.frame = self.change_action(self.action, self.frame, 'run')
             self.flip = False
-        if self.movement[0] < 0:
+        if self.movement[0] < 0 and ground_collide:
             self.action, self.frame = self.change_action(self.action, self.frame, 'run')
             self.flip = True
-        if self.movement[0] == 0:
+        if self.movement[0] > 0 and not ground_collide:
+            self.action, self.frame = self.change_action(self.action, self.frame, 'jump')
+            self.flip = False
+        if self.movement[0] < 0 and not ground_collide:
+            self.action, self.frame = self.change_action(self.action, self.frame, 'jump')
+            self.flip = True
+
+        if self.movement[0] == 0 and ground_collide:
             self.action, self.frame = self.change_action(self.action, self.frame, 'idle')
+
         self.image = self.animation_frames[self.animation_database[self.action][self.frame]]
 
-        # Moving and collisions
         self.rect, collisions = self.move(self.rect, self.movement, self.tile_rects)
 
         if collisions['bottom']:
@@ -131,6 +139,13 @@ class Entity(pg.sprite.Sprite):
         :rtype: (pygame.Rect, dict)
         """
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
+
+        # Check map borders
+        if movement[0] > 0 and rect.x + TILESIZE + movement[0] >= self.map.width:
+            rect.right = self.map.width
+        elif movement[0] < 0 and rect.x - movement[0] <= 0:
+            rect.left = 0
+
         rect.x += movement[0]
 
         hit_list = self.collision_test(rect, tiles)
