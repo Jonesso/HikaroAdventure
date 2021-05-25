@@ -1,4 +1,8 @@
+import argparse
+import json
 import sys
+
+import requests
 from pygame.locals import *
 
 from entity.Entity import Entity
@@ -15,6 +19,15 @@ def draw_text(text, font, color, surface, x, y):
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
+
+
+heroku_url = 'https://hikaro-server.herokuapp.com'
+os.environ["SERVER_HOST"] = '0.0.0.0'
+os.environ["SERVER_PORT"] = '2211'
+parser = argparse.ArgumentParser(description="Pytest game Hikaro Adventure")
+parser.add_argument('--dockerized', action='store_true',
+                    help="Run game with score server deployed in docker container")
+args = parser.parse_args()
 
 
 class Game:
@@ -346,7 +359,13 @@ class Game:
 
             if button_send_results.collidepoint((mx, my)):
                 if self.click:
-                    # TODO send request method
+                    # Send request with username and score to server
+                    payload = json.dumps({"name": self.username_text, "score": self.player.score})
+                    if args.dockerized:
+                        requests.put(f'{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/update_score',json=payload)
+                    else:
+                        requests.put(f'{heroku_url}/update_score', json=payload)
+
                     # return to main screen after request
                     self.show_menu_screen()
                     break
@@ -378,19 +397,12 @@ class Game:
             self.clock.tick(FPS)
 
     def show_leaders_screen(self):
-        top_10_leaders = {
-            'user1': 60,
-            'user2': 20,
-            'asd': 0,
-            'used': 60,
-            'usg': 20,
-            'afr': 0,
-            'user': 60,
-            'uscvb': 20,
-            'aret': 0,
-            'usert': 60
-        }
-        # TODO send request to get leaders
+        # Get leaderboard from server
+        if args.dockerized:
+            top_10_leaders = requests.get(f'{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/get_top_score').json()
+        else:
+            top_10_leaders = requests.get(f'{heroku_url}/get_top_score').json()
+
         bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
         x = (WIDTH - button_width) // 2
