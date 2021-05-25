@@ -42,6 +42,7 @@ class Entity(pg.sprite.Sprite):
         self.y_momentum = 0
         self.air_timer = 0
         self.jump = False
+        self.attack = False
 
         self.movement = [0, 0]
         self.tile_rects = []
@@ -53,6 +54,7 @@ class Entity(pg.sprite.Sprite):
                                    'jump': self.load_animation("jump", [70, 30, 9, 9])}
         self.action = 'idle'
         self.frame = 0
+        self.offset = 0
         self.flip = False
 
     def update(self):
@@ -74,24 +76,47 @@ class Entity(pg.sprite.Sprite):
         self.frame += 1
         if self.frame >= len(self.animation_database[self.action]):
             self.frame = 0
+            if self.attack and self.action == 'attack':
+                self.attack = False
         # Moving and collisions
         ground_collide = pg.sprite.spritecollide(self, self.nearest_blocks, False, collided=pg.sprite.collide_circle)
-        if self.movement[0] > 0 and ground_collide:
+        self.offset = 0
+        # Attack
+        if self.movement[0] > 0 and self.attack:
+            self.action, self.frame = self.change_action(self.action, self.frame, 'attack')
+            self.flip = False
+        if self.movement[0] < 0 and self.attack:
+            self.action, self.frame = self.change_action(self.action, self.frame, 'attack')
+            self.flip = True
+            if 7 < self.frame < 16:
+                self.offset = 8
+            else:
+                self.offset = 0
+        if self.movement[0] == 0 and self.attack:
+            self.action, self.frame = self.change_action(self.action, self.frame, 'attack')
+            if 7 < self.frame < 16 and not self.flip:
+                self.offset = 0
+            elif 7 < self.frame < 16 and self.flip:
+                self.offset = 8
+        # Run
+        if self.movement[0] > 0 and ground_collide and not self.attack:
             self.action, self.frame = self.change_action(self.action, self.frame, 'run')
             self.flip = False
-        if self.movement[0] < 0 and ground_collide:
+        if self.movement[0] < 0 and ground_collide and not self.attack:
             self.action, self.frame = self.change_action(self.action, self.frame, 'run')
             self.flip = True
-        if self.movement[0] > 0 and not ground_collide:
+
+        # Jump
+        if self.movement[0] > 0 and not ground_collide and not self.attack:
             self.action, self.frame = self.change_action(self.action, self.frame, 'jump')
             self.flip = False
-        if self.movement[0] < 0 and not ground_collide:
+        if self.movement[0] < 0 and not ground_collide and not self.attack:
             self.action, self.frame = self.change_action(self.action, self.frame, 'jump')
             self.flip = True
 
-        if self.movement[0] == 0 and ground_collide:
+        # Idle
+        if self.movement[0] == 0 and ground_collide and not self.attack:
             self.action, self.frame = self.change_action(self.action, self.frame, 'idle')
-
         self.image = self.animation_frames[self.animation_database[self.action][self.frame]]
 
         self.rect, collisions = self.move(self.rect, self.movement, self.tile_rects)

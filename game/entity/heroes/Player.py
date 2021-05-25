@@ -15,7 +15,8 @@ class Player(Entity):
 
     def __init__(self, all_sprites, x, y, map):
         super().__init__(all_sprites, x, y, map)
-        self.animation_database.update({'hover': self.load_animation('hover', [8])})
+        self.animation_database.update({'hover': self.load_animation('hover', [8]),
+                                        'attack': self.load_animation('attack', [8, 8, 5])})
         n_x = n_y = 0
         w, h = map.width // TILESIZE, map.height // TILESIZE
         if 0 <= x <= 22:
@@ -101,8 +102,12 @@ class Player(Entity):
                         self.audioplayer.play_jump_sound()
                         self.y_momentum = -5
                         self.jump = True
+                # Hover
                 if event.key == K_z:
                     self.key_z_pressed = True
+                # Attack
+                if event.key == K_x:
+                    self.attack = True
                 if event.key == K_DOWN:
                     self.key_down_pressed = True
         except AttributeError:

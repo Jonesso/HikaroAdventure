@@ -103,7 +103,8 @@ class Game:
         for sprite in self.all_sprites:
             if isinstance(sprite, Player):
                 self.display.blit(pg.transform.flip(sprite.image, self.player.flip, False), (
-                    self.player.rect.x - self.player.scroll[0], self.player.rect.y - self.player.scroll[1]))
+                    self.player.rect.x - self.player.scroll[0] - self.player.offset,
+                    self.player.rect.y - self.player.scroll[1]))
             if isinstance(sprite, Enemy):
                 self.display.blit(pg.transform.flip(sprite.image, sprite.flip, False), (
                     sprite.rect.x - self.player.scroll[0], sprite.rect.y - self.player.scroll[1]))
