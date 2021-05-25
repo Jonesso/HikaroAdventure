@@ -39,6 +39,8 @@ class Player(Entity):
         self.key_down_pressed = False
         self.key_z_pressed = False
 
+        self.is_dead = False
+
     def update(self):
         super(Player, self).update()
         # Ladder
@@ -51,15 +53,13 @@ class Player(Entity):
         # Coins
         if pg.sprite.spritecollide(self, self.map.coins, False):
             for coin in self.map.coins:
-                #print('-' * 50)
-                #print(coin.rect.x, self.rect.x)
                 if abs(coin.rect.x - self.rect.x) < TILESIZE and abs(coin.rect.y - self.rect.y) < TILESIZE:
                     self.score += 1
                     self.map.delete_coin(coin)
-                    #print(self.map.coins)
-                    #print('deleting')
                     break
-
+        # Lava
+        if pg.sprite.spritecollide(self, self.map.lava, False):
+            self.is_dead = True
 
         # Hover
         if self.key_z_pressed:

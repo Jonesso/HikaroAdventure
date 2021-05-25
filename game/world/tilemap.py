@@ -30,6 +30,7 @@ class Map:
 
         self.ladders = []
         self.ground = []
+        self.lava = []
         self.coins = []
 
         self.properties = {}
@@ -48,7 +49,7 @@ class Map:
         """
         tile_x = x // TILESIZE
         tile_y = y // TILESIZE
-        keys = ['ground', 'ladder', 'coin']
+        keys = ['ground', 'ladder', 'coin', 'lava']
         try:
             properties = self.tmx_data.get_tile_properties(tile_x, tile_y, 0)
         except ValueError:
@@ -92,6 +93,8 @@ class Map:
                         nearest_blocks.append(Ground(self.group, tile_image, x, y))
                     if int(properties['ladder']):
                         self.ladders.append(Ladder(self.group, tile_image, x, y))
+                    if int(properties['lava']):
+                        self.lava.append(Lava(self.group, tile_image, x, y))
                 if int(properties['coin']):
                     coins.update({(x, y): tile_image})
                     self.properties.update({(x, y): (self.properties.get((x, y))[0], None)})

@@ -36,6 +36,10 @@ class Game:
         self.audioplayer = AudioPlayer()
         self.click = False
 
+        self.username_textbox_active = False
+        self.username_text = ''
+        self.username_textbox = pg.Rect(100, 100, 140, 32)
+
     def load_data(self, level_name):
         """
         Loading all data for chosen map (e.g. music, start coords)
@@ -87,6 +91,11 @@ class Game:
             (self.display, player_x, player_y, self.player.scroll, self.enemies)
         self.all_sprites.update()
 
+        if self.player.is_dead:
+            self.playing = False
+            pg.mixer.music.stop()
+            self.show_death_screen()
+
     def draw(self):
         """
         Draws sprites to the display, update pygame display
@@ -124,18 +133,26 @@ class Game:
                     if self.playing:
                         self.click = False
                         self.show_pause_screen()
+                if self.username_textbox_active:
+                    if event.key == pg.K_BACKSPACE:
+                        self.username_text = self.username_text[:-1]
+                    else:
+                        self.username_text += event.unicode
             if self.playing:
                 self.player.update_event(event)
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click = True
+                if self.username_textbox.collidepoint(event.pos):
+                    self.username_textbox_active = not self.username_textbox_active
+                else:
+                    self.username_textbox_active = False
+
         return pg.event.get()
 
     def show_menu_screen(self):
         bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
-        button_width = 200
-        button_height = 50
         x = (WIDTH - button_width) // 2
         y = HEIGHT // 16
         while True:
@@ -191,8 +208,6 @@ class Game:
     def show_options_screen(self):
         bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
-        button_width = 200
-        button_height = 50
         x = WIDTH // 16
         y = HEIGHT // 16
         sliderMusic = Slider(self.screen, WIDTH // 3, y * 5, WIDTH // 3, 40, min=0, max=100, step=1, colour=DARKGREY,
@@ -253,8 +268,6 @@ class Game:
         pg.mixer.music.pause()
         bg = pg.image.load(background_path('japan_menu.png'))
         bg = pg.transform.scale(bg, WINDOW_SIZE)
-        button_width = 200
-        button_height = 50
         x = (WIDTH - button_width) // 2
         y = HEIGHT // 16
         while paused:
@@ -297,6 +310,59 @@ class Game:
             draw_text('Main menu', self.font, WHITE, self.screen,
                       x + button_width // 2 - len('Main menu') * button_width // 30,
                       y * 10 + button_height // 2 - 11)
+
+            self.click = False
+            self.events()
+            pg.display.update()
+            self.clock.tick(FPS)
+
+    def show_death_screen(self):
+        bg = pg.image.load(background_path('japan_menu.png'))
+        bg = pg.transform.scale(bg, WINDOW_SIZE)
+        x = (WIDTH - button_width) // 2
+        y = HEIGHT // 16
+        self.username_textbox.x = x
+        self.username_textbox.y = y * 7
+        while True:
+            self.screen.blit(bg, (0, 0))
+            draw_text('YOU DIED', self.font, WHITE, self.screen,
+                      x + 30, y * 3)
+            draw_text(f'Your score: {self.player.score}', self.font, WHITE, self.screen,
+                      x + 12, y * 5)
+            draw_text('Your name: ', self.font, WHITE, self.screen,
+                      self.username_textbox.x - 180, y * 7)
+
+            mx, my = pg.mouse.get_pos()
+            button_send_results = pygame.Rect(x, y * 9, button_width, button_height)
+            button_main_menu = pygame.Rect(x, y * 11, button_width, button_height)
+
+            if button_send_results.collidepoint((mx, my)):
+                if self.click:
+                    # TODO send request method
+                    # return to main screen after request
+                    self.show_menu_screen()
+                    break
+            if button_main_menu.collidepoint((mx, my)):
+                if self.click:
+                    self.click = False
+                    self.show_menu_screen()
+                    break
+
+            pygame.draw.rect(self.screen, LIGHTGREY, button_send_results)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_main_menu)
+
+            draw_text('Send request', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Send request') * button_width // 30 - 10,
+                      y * 9 + button_height // 2 - 11)
+            draw_text('Main menu', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Main menu') * button_width // 30 - 15,
+                      y * 11 + button_height // 2 - 11)
+
+            txt_surface = self.font.render(self.username_text, False, BLACK)
+            self.username_textbox.w = max(200, txt_surface.get_width() + 10)
+
+            self.screen.blit(txt_surface, (self.username_textbox.x + 5, self.username_textbox.y + 5))
+            pg.draw.rect(self.screen, WHITE, self.username_textbox, 2)
 
             self.click = False
             self.events()

@@ -4,6 +4,8 @@ HEIGHT = 768
 FPS = 60
 TITLE = "Hikaro Adventure"
 TILESIZE = 16
+button_width = 200
+button_height = 50
 WINDOW_SIZE = (WIDTH, HEIGHT)  # set up window size
 
 # Colors (R, G, B)

@@ -48,6 +48,12 @@ class Block(pg.sprite.Sprite):
             n += 1
         return animation_frame_data
 
+    def change_action(self, action_var, frame, new_value):
+        if action_var != new_value:
+            action_var = new_value
+            frame = 0
+        return action_var, frame
+
 
 class Ladder(Block):
     def __init__(self, groups, sprite, x, y):
@@ -70,7 +76,6 @@ class Coin(Block):
         self.frame = 0
         self.image = pg.image.load(os.path.join(self.sprite_path, 'coin_0.png')).convert()
         self.image.set_colorkey(WHITE)
-        self.image = pg.transform.scale(self.image, (TILESIZE, TILESIZE))
 
     def update(self):
         self.frame += 1
@@ -79,8 +84,7 @@ class Coin(Block):
         self.action, self.frame = self.change_action(self.action, self.frame, 'coin')
         self.image = self.animation_frames[self.animation[self.action][self.frame]]
 
-    def change_action(self, action_var, frame, new_value):
-        if action_var != new_value:
-            action_var = new_value
-            frame = 0
-        return action_var, frame
+
+class Lava(Block):
+    def __init__(self, groups, sprite, x, y):
+        super(Lava, self).__init__(groups, sprite, x, y)
