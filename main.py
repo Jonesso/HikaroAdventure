@@ -79,12 +79,12 @@ class Game:
         """
         self.player.update_scroll(self.level_map.width, self.level_map.height)
         self.display.blit(self.bg, (self.bg_x, self.bg_y))  # background move (actually no)
-
+        self.all_sprites.empty()
+        self.all_sprites.add(self.player, *self.enemies, *self.level_map.coins)
         player_x = self.player.rect.x // TILESIZE
         player_y = self.player.rect.y // TILESIZE
         self.player.tile_rects, self.player.nearest_blocks = self.level_map.blit_all_tiles \
             (self.display, player_x, player_y, self.player.scroll, self.enemies)
-
         self.all_sprites.update()
 
     def draw(self):
@@ -98,8 +98,13 @@ class Game:
             if isinstance(sprite, Enemy):
                 self.display.blit(pg.transform.flip(sprite.image, sprite.flip, False), (
                     sprite.rect.x - self.player.scroll[0], sprite.rect.y - self.player.scroll[1]))
+            if isinstance(sprite, Coin):
+                self.display.blit(pg.transform.flip(sprite.image, False, False), (
+                    sprite.rect.x - self.player.scroll[0], sprite.rect.y - self.player.scroll[1]))
+        score_surf = self.font.render(f'Score: {self.player.score}', False, (0, 0, 0))
         surf = pg.transform.scale(self.display, WINDOW_SIZE)
         self.screen.blit(surf, (0, 0))
+        self.screen.blit(score_surf, (WIDTH - 200, 50))
         pg.display.update()  # update display
 
     def events(self):

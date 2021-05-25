@@ -11,6 +11,7 @@ from utils import sprites_path
 class Player(Entity):
     sprite_path = os.path.join(sprites_path(), 'hero')
     speed = 2
+    score = 0
 
     def __init__(self, all_sprites, x, y, map):
         super().__init__(all_sprites, x, y, map)
@@ -47,6 +48,18 @@ class Player(Entity):
         if self.key_down_pressed and pg.sprite.spritecollide(self, self.map.ladders, False):
             self.y_momentum = 1
             self.move(self.rect, [0, 1], self.tile_rects)
+        # Coins
+        if pg.sprite.spritecollide(self, self.map.coins, False):
+            for coin in self.map.coins:
+                #print('-' * 50)
+                #print(coin.rect.x, self.rect.x)
+                if abs(coin.rect.x - self.rect.x) < TILESIZE and abs(coin.rect.y - self.rect.y) < TILESIZE:
+                    self.score += 1
+                    self.map.delete_coin(coin)
+                    #print(self.map.coins)
+                    #print('deleting')
+                    break
+
 
         # Hover
         if self.key_z_pressed:
