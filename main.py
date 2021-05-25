@@ -163,8 +163,9 @@ class Game:
             mx, my = pg.mouse.get_pos()
 
             button_game = pygame.Rect(x, y * 6, button_width, button_height)
-            button_options = pygame.Rect(x, y * 8, button_width, button_height)
-            button_exit = pygame.Rect(x, y * 10, button_width, button_height)
+            button_leaders = pygame.Rect(x, y * 8, button_width, button_height)
+            button_options = pygame.Rect(x, y * 10, button_width, button_height)
+            button_exit = pygame.Rect(x, y * 12, button_width, button_height)
 
             if button_game.collidepoint((mx, my)):
                 if self.click:
@@ -172,21 +173,28 @@ class Game:
             if button_options.collidepoint((mx, my)):
                 if self.click:
                     self.show_options_screen()
+            if button_leaders.collidepoint((mx, my)):
+                if self.click:
+                    self.show_leaders_screen()
             if button_exit.collidepoint((mx, my)):
                 if self.click:
                     self.quit()
             pygame.draw.rect(self.screen, LIGHTGREY, button_game)
             pygame.draw.rect(self.screen, LIGHTGREY, button_options)
             pygame.draw.rect(self.screen, LIGHTGREY, button_exit)
+            pygame.draw.rect(self.screen, LIGHTGREY, button_leaders)
             draw_text('Start', self.font, WHITE, self.screen,
                       x + button_width // 2 - len('Start') * button_width // 30,
                       y * 6 + button_height // 2 - 11)
+            draw_text('Top 10', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Top 10') * button_width // 30,
+                      y * 8 + button_height // 2 - 11)
             draw_text('Options', self.font, WHITE, self.screen,
                       x + button_width // 2 - len('Options') * button_width // 30,
-                      y * 8 + button_height // 2 - 11)
+                      y * 10 + button_height // 2 - 11)
             draw_text('Exit', self.font, WHITE, self.screen,
                       x + button_width // 2 - len('Exit') * button_width // 30,
-                      y * 10 + button_height // 2 - 11)
+                      y * 12 + button_height // 2 - 11)
             self.click = False
             self.events()
             pg.display.update()
@@ -363,6 +371,63 @@ class Game:
 
             self.screen.blit(txt_surface, (self.username_textbox.x + 5, self.username_textbox.y + 5))
             pg.draw.rect(self.screen, WHITE, self.username_textbox, 2)
+
+            self.click = False
+            self.events()
+            pg.display.update()
+            self.clock.tick(FPS)
+
+    def show_leaders_screen(self):
+        top_10_leaders = {
+            'user1': 60,
+            'user2': 20,
+            'asd': 0,
+            'used': 60,
+            'usg': 20,
+            'afr': 0,
+            'user': 60,
+            'uscvb': 20,
+            'aret': 0,
+            'usert': 60
+        }
+        # TODO send request to get leaders
+        bg = pg.image.load(background_path('japan_menu.png'))
+        bg = pg.transform.scale(bg, WINDOW_SIZE)
+        x = (WIDTH - button_width) // 2
+        y = HEIGHT // 16
+        while True:
+            self.screen.blit(bg, (0, 0))
+            draw_text('TOP 10', self.font, WHITE, self.screen,
+                      x + 30, y * 2)
+            draw_text('Place', self.font, WHITE, self.screen,
+                      WIDTH // 4, y * 3)
+            draw_text('Name', self.font, WHITE, self.screen,
+                      WIDTH // 2 - 100, y * 3)
+            draw_text('High Score', self.font, WHITE, self.screen,
+                      3 * WIDTH // 4 - 100, y * 3)
+            n = 1
+            for name, score in top_10_leaders.items():
+                draw_text(f'{n}', self.font, WHITE, self.screen,
+                          WIDTH // 4, y * (3 + n))
+                draw_text(f'{name}', self.font, WHITE, self.screen,
+                          WIDTH // 2 - 100, y * (3 + n))
+                draw_text(f'{score}', self.font, WHITE, self.screen,
+                          3 * WIDTH // 4 - 100, y * (3 + n))
+                n += 1
+            mx, my = pg.mouse.get_pos()
+            button_main_menu = pygame.Rect(x, y * 14, button_width, button_height)
+
+            if button_main_menu.collidepoint((mx, my)):
+                if self.click:
+                    self.click = False
+                    self.show_menu_screen()
+                    break
+
+            pygame.draw.rect(self.screen, LIGHTGREY, button_main_menu)
+
+            draw_text('Main menu', self.font, WHITE, self.screen,
+                      x + button_width // 2 - len('Main menu') * button_width // 30 - 15,
+                      y * 14 + button_height // 2 - 11)
 
             self.click = False
             self.events()
