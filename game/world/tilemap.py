@@ -1,5 +1,5 @@
 import pygame as pg
-from tools.settings import *
+from game.tools.settings import *
 import pygame
 from pytmx.util_pygame import load_pygame
 from os import path

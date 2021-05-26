@@ -5,13 +5,13 @@ import sys
 import requests
 from pygame.locals import *
 
-from entity.Entity import Entity
-from entity.mobs.Enemy import Enemy
+from game.entity.Entity import Entity
+from game.entity.mobs.Enemy import Enemy
 from game.entity.heroes.Player import Player
 from game.world.tilemap import *
 from game.tools.sfx.audioplayer import AudioPlayer
 from pygame_widgets import Slider, TextBox
-from utils import background_path
+from game.utils import background_path
 
 
 def draw_text(text, font, color, surface, x, y):
@@ -363,7 +363,7 @@ class Game:
                     # Send request with username and score to server
                     payload = json.dumps({"name": self.username_text, "score": self.player.score})
                     if args.dockerized:
-                        requests.put(f'{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/update_score',json=payload)
+                        requests.put(f'http://{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/update_score', json=payload)
                     else:
                         requests.put(f'{heroku_url}/update_score', json=payload)
 
@@ -400,7 +400,7 @@ class Game:
     def show_leaders_screen(self):
         # Get leaderboard from server
         if args.dockerized:
-            top_10_leaders = requests.get(f'{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/get_top_score').json()
+            top_10_leaders = requests.get(f'http://{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/get_top_score').json()
         else:
             top_10_leaders = requests.get(f'{heroku_url}/get_top_score').json()
 

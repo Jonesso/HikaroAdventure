@@ -2,10 +2,10 @@ import os
 
 import pygame as pg
 
-from entity.Entity import Entity
+from game.entity.Entity import Entity
 from game.tools.settings import *
 from pygame.locals import *
-from utils import sprites_path
+from game.utils import sprites_path
 
 
 class Player(Entity):

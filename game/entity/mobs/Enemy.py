@@ -1,7 +1,7 @@
 import os
 import pygame
-from entity.Entity import Entity
-from utils import sprites_path
+from game.entity.Entity import Entity
+from game.utils import sprites_path
 from game.tools.settings import *
 
 

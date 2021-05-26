@@ -1,6 +1,6 @@
 import pygame
 import random
-from utils import music_levels_path, sounds_path
+from game.utils import music_levels_path, sounds_path
 
 pygame.mixer.init()
 

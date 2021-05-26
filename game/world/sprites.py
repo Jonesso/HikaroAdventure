@@ -1,8 +1,8 @@
 import pygame as pg
 import glob
 import os
-from utils import sprites_path
-from tools.settings import *
+from game.utils import sprites_path
+from game.tools.settings import *
 
 
 class Block(pg.sprite.Sprite):
