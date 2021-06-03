@@ -5,6 +5,13 @@ from game.utils import sprites_path
 from game.tools.settings import *
 
 
+class EmptySprite(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface([TILESIZE, TILESIZE])
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = x, y
+
 class Block(pg.sprite.Sprite):
     sprite_path = None
     animation = {}

@@ -2,6 +2,7 @@ import pygame as pg
 from game.tools.settings import *
 import pygame
 from pytmx.util_pygame import load_pygame
+from game.entity.mobs.Enemy import Enemy
 from os import path
 from game.world.sprites import *
 
@@ -32,6 +33,7 @@ class Map:
         self.ground = []
         self.lava = []
         self.coins = []
+        self.enemies = []
 
         self.properties = {}
         self.fill_properties()
@@ -49,7 +51,7 @@ class Map:
         """
         tile_x = x // TILESIZE
         tile_y = y // TILESIZE
-        keys = ['ground', 'ladder', 'coin', 'lava']
+        keys = ['ground', 'ladder', 'coin', 'lava', 'enemy']
         try:
             properties = self.tmx_data.get_tile_properties(tile_x, tile_y, 0)
         except ValueError:
@@ -136,9 +138,12 @@ class Map:
     def fill_properties(self):
         for layer in self.tmx_data:
             for tile in layer.tiles():
-                self.properties.update(
-                    {(tile[0], tile[1]):
-                        (self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE).copy(), tile[2])})
+                props = self.get_tile_properties(tile[0] * TILESIZE, tile[1] * TILESIZE).copy()
+                self.properties.update({(tile[0], tile[1]): (props, tile[2])})
+                if int(props['enemy']):
+                    self.enemies.append(Enemy(self.group, tile[0], tile[1], self))
+                    props['enemy'] = 0
+                    self.properties.update({(tile[0], tile[1]): (props, None)})
 
     def find_nearest_tiles(self, x, y, range_x, range_y):
         tiles = []
@@ -157,3 +162,7 @@ class Map:
         self.properties.update({(x, y): (props[0], props[1])})
         self.coins.remove(coin)
         self.group.remove(coin)
+
+    def delete_enemy(self, enemy):
+        self.enemies.remove(enemy)
+        self.group.remove(enemy)

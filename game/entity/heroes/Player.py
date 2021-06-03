@@ -6,6 +6,7 @@ from game.entity.Entity import Entity
 from game.tools.settings import *
 from pygame.locals import *
 from game.utils import sprites_path
+from world.sprites import EmptySprite
 
 
 class Player(Entity):
@@ -61,6 +62,25 @@ class Player(Entity):
         # Lava
         if pg.sprite.spritecollide(self, self.map.lava, False):
             self.is_dead = True
+
+        # Attack collide
+        if self.attack:
+            n_p = EmptySprite(self.rect.x, self.rect.y)
+            hit = False
+            # Right
+            if not self.flip:
+                n_p.rect.x += 4
+            # Left
+            else:
+                n_p.rect.x -= 4
+            if pg.sprite.spritecollide(n_p, self.map.enemies, False):
+                for enemy in self.map.enemies:
+                    if abs(enemy.rect.x - n_p.rect.x) <= TILESIZE and abs(enemy.rect.y - n_p.rect.y) <= TILESIZE:
+                        hit = True
+                        self.map.delete_enemy(enemy)
+                        break
+            if hit:
+                self.score += 1
 
         # Hover
         if self.key_z_pressed:

@@ -67,8 +67,10 @@ class Game:
 
         self.player = Player(self.all_sprites, 2, 36, self.level_map)  # x, y: start coord-s
 
-        enemy = Enemy(self.all_sprites, 10, 36, self.level_map)
-        self.enemies = [enemy]
+        self.enemies = self.level_map.enemies
+
+        for enemy in self.enemies:
+            enemy.player = self.player
 
         # TODO create a dict for levels and starting coords
         # Sounds
@@ -120,7 +122,7 @@ class Game:
                     self.player.rect.y - self.player.scroll[1]))
             if isinstance(sprite, Enemy):
                 self.display.blit(pg.transform.flip(sprite.image, sprite.flip, False), (
-                    sprite.rect.x - self.player.scroll[0], sprite.rect.y - self.player.scroll[1]))
+                    sprite.rect.x - self.player.scroll[0] - sprite.offset, sprite.rect.y - self.player.scroll[1]))
             if isinstance(sprite, Coin):
                 self.display.blit(pg.transform.flip(sprite.image, False, False), (
                     sprite.rect.x - self.player.scroll[0], sprite.rect.y - self.player.scroll[1]))
@@ -244,6 +246,10 @@ class Game:
             self.screen.blit(bg, (0, 0))
             draw_text('Options', self.font, WHITE, self.screen,
                       WIDTH // 2 - len('Options') * button_width // 30, y * 3)
+            draw_text('Music', self.font, WHITE, self.screen,
+                      sliderMusic.getX() - 300, sliderMusic.getY())
+            draw_text('Sounds', self.font, WHITE, self.screen,
+                      sliderSounds.getX() - 300, sliderSounds.getY())
 
             mx, my = pg.mouse.get_pos()
 
@@ -363,7 +369,8 @@ class Game:
                     # Send request with username and score to server
                     payload = json.dumps({"name": self.username_text, "score": self.player.score})
                     if args.dockerized:
-                        requests.put(f'http://{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/update_score', json=payload)
+                        requests.put(f'http://{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/update_score',
+                                     json=payload)
                     else:
                         requests.put(f'{heroku_url}/update_score', json=payload)
 
@@ -400,7 +407,8 @@ class Game:
     def show_leaders_screen(self):
         # Get leaderboard from server
         if args.dockerized:
-            top_10_leaders = requests.get(f'http://{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/get_top_score').json()
+            top_10_leaders = requests.get(
+                f'http://{os.getenv("SERVER_HOST")}:{os.getenv("SERVER_PORT")}/get_top_score').json()
         else:
             top_10_leaders = requests.get(f'{heroku_url}/get_top_score').json()
 
