@@ -6,7 +6,7 @@ from game.entity.Entity import Entity
 from game.tools.settings import *
 from pygame.locals import *
 from game.utils import sprites_path
-from world.sprites import EmptySprite
+from game.world.sprites import EmptySprite
 
 
 class Player(Entity):
